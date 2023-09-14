@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Particle Blastr - Dev Testing</title>
+
+  <!-- @exclude -->
+
+  <script src="//localhost:35729/livereload.js"></script>
+
+  <!-- @endexclude -->
+
+  <link rel="stylesheet" type="text/css" href="vendor/normalize.css" />
+  <style type="text/css">
+    body {
+      width:100%;
+      height:100%;
+
+      overflow: hidden;
+
+      background: url('img/checkerboard_cell.jpg');
+      background-repeat: repeat;
+    }
+
+    #page-contents {
+      position: fixed;
+      display: block;
+      height: 100%;
+      width: 980px;
+      min-height: 900px;
+
+      text-align: center;
+      margin: 0 auto;
+
+    }
+
+    #canvas1,
+    #canvas2 {
+      position: absolute;
+      top:0;
+      left:0;
+
+      border: thin solid red;
+    }
+
+    h1 {
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="page-contents">
+    <h1> Click on the canvas to see a particle blast! </h1>
+    <canvas id="canvas2" width="980" height="900"></canvas>
+    <canvas id="canvas1" width="980" height="900"></canvas>
+  </div>
+
+  <script type="text/javascript" src="src/particle-blastr.js"></script>
+  <script type="text/javascript">
+
+    const pb = new ParticleBlastr({
+      cvs: document.getElementById('canvas1'),
+      
+      numPrts: 500,
+      // particleColor: 'rgba(255, 60, 0, 0.75)',
+      particleColor: 'rgba(255, 0, 0, 0.35)',
+
+      prtMaxWidth:  12,
+      prtMaxHeight: 12,
+
+      prtMaxDist: 6800,
+
+      blastLengthMs: 1600,
+      // gravity: 12
+      gravity: 22
+      // gravity: 42
+
+    });
+
+    const pb2 = new ParticleBlastr({
+      cvs: document.getElementById('canvas2'),
+      
+      numPrts: 550,
+      particleColor: 'rgba(25, 20, 10, 0.05)',
+
+      prtMaxWidth:  35,
+      prtMaxHeight: 35,
+
+      prtMaxDist: 7000,
+
+      blastLengthMs: 1600,
+      // gravity: 12
+      gravity: 22
+      // gravity: 42
+
+    });
+
+    let blastOrReset = true;
+
+    document.addEventListener('click', (e) => {
+      pb.startBlast( e.pageX - (pb.prtMaxWidth/2),  e.pageY - (pb.prtMaxHeight/2));
+      pb2.startBlast(e.pageX - (pb2.prtMaxWidth/2), e.pageY - (pb2.prtMaxHeight/2));
+    });
+  </script>
+</body>
+</html>
