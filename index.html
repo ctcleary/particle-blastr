@@ -86,6 +86,7 @@
       
       // particleCount: 100,
       particleCount: 200,
+      // particleCount: 5,
 
       // particleColor: [255,60,0], 
       // particleColor: [255,0,255],
@@ -118,9 +119,10 @@
       particleEndOpacity: 0,
 
 
+/* ----- DIFFERENT SHAPE EXAMPLES ------- */
 
-      // shape: ParticleBlastr.SHAPE.SQUARE,
-      // particleSize: 20,
+      shape: ParticleBlastr.SHAPE.SQUARE,
+      particleSize: 12,
 
       // shape: ParticleBlastr.SHAPE.RECT,
       // particleWidth:  35,
@@ -131,13 +133,17 @@
       // particleHeight: 20,
       // particleBorderRadius: 30,
 
-      shape: ParticleBlastr.SHAPE.CIRCLE,
-      particleRadius: 8,
+      // shape: ParticleBlastr.SHAPE.CIRCLE,
+      // particleRadius: 5,
 
-      sizeVariance: 10,
+/* ----- DIFFERENT SHAPE EXAMPLES ------- */
 
-      particleMaxDistance: 4900,
-      // allowNegY: true,
+      sizeVariance: 4,
+
+      particleMaxDistance: 400,
+      allowNegY: true,
+      // TODO min distance
+      particleMinDistance: 200,
 
       blastLengthMs: blastLength,
       
@@ -146,12 +152,10 @@
 
       // TODO end states
       // particleEndSize: 0,
+
+      // TODO endColors (this would be very tricky to do well, and would include 'brightness' consideration etc)
       // particleEndColor: [0, 0, 0],
       // particleEndColors: [],
-
-      // TODO min distance
-      // particleMinDist: 1200,
-
     });
 
     // const pb2 = new ParticleBlastr({

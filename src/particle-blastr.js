@@ -115,10 +115,19 @@ class Particle {
   }
 
   animate(ctx, lifetimeFactor) {
+    // this.liveTime = lifetimeFactor;
     // let lifetimeFactorInverse = 1 - lifetimeFactor; // lifetimeFactorInverse 1 approaches 0
 
-    this.x = this.x + (this.distX / this.liveTime);
-    this.y = this.y - (this.distY / this.liveTime);
+    // let newX  = this.x + (this.distX / this.liveTime);
+    // let newY  = this.y - (this.distY / this.liveTime);
+    // console.log("this.liveTime ::", this.liveTime);
+
+    // console.log("lifetimeFactor ::", lifetimeFactor);
+    let newX = this.startX + (this.distX * lifetimeFactor); 
+    let newY = this.startY - (this.distY * lifetimeFactor); 
+
+    this.x = newX;
+    this.y = newY;
 
     //Gravity
     // // TODO, factor in upward Y speed of particle
@@ -153,16 +162,18 @@ class Particle {
     this.distX = util.roundRand(this.dist);
     this.distY = util.roundRand(this.dist);
 
+    const distXY = this.clampToCircle(this.x, this.y, this.distX, this.distY);
+
     const isNeg = Math.random() > 0.5;
-    if (isNeg) this.distX = this.distX * -1;
+    if (isNeg) distXY.x = distXY.x * -1;
 
     if (util.isDef(this.allowNegY) && this.allowNegY) {
       const isYNeg = Math.random() > 0.5;
-      if (isYNeg) this.distY = this.distY * -1;
+
+      if (isYNeg) distXY.y = distXY.y * -1;
     }
 
-    const distXY = this.clampToCircle(this.x, this.y, this.distX, this.distY);
-
+    console.log("distXY ::", distXY);
     this.distX = distXY.x;
     this.distY = distXY.y;
   }
@@ -208,6 +219,9 @@ class ParticleBlastr {
   }
 
   pRadius = 5
+
+  pMaxDist = 1000;
+  pMinDist = 0;
 
   pOpacity = 1;
   pEndOpacity = 0;
@@ -275,8 +289,8 @@ class ParticleBlastr {
     this.pOpacity    = cfg.particleOpacity || 1;
     this.pEndOpacity = cfg.particleEndOpacity || 0;
 
-    if (cfg.particleMaxDistance)    this.pMaxDist = cfg.particleMaxDistance;
-    // TODO minDistance
+    if (cfg.particleMaxDistance) this.pMaxDist = cfg.particleMaxDistance;
+    if (cfg.particleMinDistance) this.pMinDist = cfg.particleMinDistance;
 
     if (util.isDef(cfg.particleBorderRadius)) this.pBorderRadius = cfg.particleBorderRadius; 
 
@@ -284,7 +298,6 @@ class ParticleBlastr {
     if (util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
 
     if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
-
 
     if (cfg.blastLengthMs) this.blastLengthMs = cfg.blastLengthMs;
 
@@ -357,7 +370,10 @@ class ParticleBlastr {
       // Randomized values:
         // TODO improve clamping so there isn't a visible "ring" of particles at the min clamp dist at large pNums
         // dist: util.clamp( this.pMaxDist * Math.random(), this.pMaxDist/2, this.pMaxDist),
-      pCfg.dist      = util.clamp( Math.random() * this.pMaxDist, this.pMaxDist/3, this.pMaxDist);
+      pCfg.dist      = util.clamp( Math.random() * this.pMaxDist, this.pMinDist, this.pMaxDist);
+
+      console.log("this.pMinDist ::", this.pMinDist);
+      console.log("pCfg.dist ::", pCfg.dist);
       
 
       pCfg.gravity   = this.pGravity;
@@ -366,7 +382,6 @@ class ParticleBlastr {
         let gravChangeBy = Math.random() * this.pGravityVariance;
 
         newGravity = this.addOrSubtract(newGravity, gravChangeBy);
-        console.log("newGravity ::", newGravity);
 
         pCfg.gravity = util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
       }
@@ -412,7 +427,7 @@ class ParticleBlastr {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     this.prts.forEach((p) => {
-      p.animate(this.ctx, lifetimeFactor);
+      p.animate(this.ctx, util.clamp(lifetimeFactor, 0, 1));
     });
 
     // Kill loop if done.
