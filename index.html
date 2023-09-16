@@ -60,48 +60,99 @@
   <script type="text/javascript" src="src/particle-blastr.js"></script>
   <script type="text/javascript">
 
+    let canvas1 = document.getElementById('canvas1');
+    let ctx    = canvas1.getContext('2d');
+    //
+    // ctx.fillStyle = `#000000`;
+    // ctx.fillRect(100, 100, 15, 15);
+    //
+
+    // const gravity = 0;
+    const gravity = 22;
+    // const gravity = 42;
+    // const gravity = 8;
+    // const gravity = -8;
+    // const gravity = 160;
+
+    const blastLength = 1600;
+    // const blastLength = 800;
+    // const blastLength = 450;
+
     const pb = new ParticleBlastr({
-      cvs: document.getElementById('canvas1'),
+      canvas: document.getElementById('canvas1'),
       
-      numPrts: 500,
+      particleCount: 100,
+      // numPrts: 1500,
+
       // particleColor: 'rgba(255, 60, 0, 0.75)',
-      particleColor: 'rgba(255, 0, 0, 0.35)',
+      // particleColor: 'rgba(255, 0, 0, 0.35)',
+      // particleColor: [255,60,0], //'rgba(255, 0, 0, 0.35)',
+      // particleColor: [255,0,255], //'rgba(255, 0, 0, 0.35)',
+      // particleColor: [255,255,0], //'rgba(255, 0, 0, 0.35)',
+      // particleColor: [0,255,255], //'rgba(255, 0, 0, 0.35)',
 
-      prtMaxWidth:  12,
-      prtMaxHeight: 12,
+      particleColors: [
+        [255,0,0],
+        [0,255,0],
+        [0,0,255],
+        [255,255,0],
+        [0,255,255],
+        [255,0,255]
+      ],
 
-      prtMaxDist: 6800,
 
-      blastLengthMs: 1600,
-      // gravity: 12
-      gravity: 22
-      // gravity: 42
+      particleOpactiy: 1,
+      particleEndOpacity: 0,
 
-    });
 
-    const pb2 = new ParticleBlastr({
-      cvs: document.getElementById('canvas2'),
+      // shape: ParticleBlastr.SHAPE.SQUARE,
+      // particleSize: 20,
+
+      // shape: ParticleBlastr.SHAPE.RECT,
+      // particleWidth:  35,
+      // particleHeight: 20,
+
+      // shape: ParticleBlastr.SHAPE.ROUND_RECT,
+      // particleWidth:  35,
+      // particleHeight: 20,
+      // particleBorderRadius: 30,
+
+      shape: ParticleBlastr.SHAPE.CIRCLE,
+      particleRadius: 10,
+
+      particleMaxDistance: 6800,
+      allowNegY: true,
+
+      blastLengthMs: blastLength,
       
-      numPrts: 550,
-      particleColor: 'rgba(25, 20, 10, 0.05)',
-
-      prtMaxWidth:  35,
-      prtMaxHeight: 35,
-
-      prtMaxDist: 7000,
-
-      blastLengthMs: 1600,
-      // gravity: 12
-      gravity: 22
-      // gravity: 42
+      // gravity: 0
+      gravity: gravity,
+      // gravityVariance: true
 
     });
 
-    let blastOrReset = true;
+    // const pb2 = new ParticleBlastr({
+    //   cvs: document.getElementById('canvas2'),
+      
+    //   numPrts: 550,
+    //   particleColor: 'rgba(25, 20, 10, 0.05)',
+
+    //   prtMaxWidth:  35,
+    //   prtMaxHeight: 35,
+
+    //   prtMaxDist: 7000,
+    //   // allowNegY: true,
+
+    //   blastLengthMs: blastLength,
+      
+    //   gravity: gravity
+
+    // });
+
 
     document.addEventListener('click', (e) => {
-      pb.startBlast( e.pageX - (pb.prtMaxWidth/2),  e.pageY - (pb.prtMaxHeight/2));
-      pb2.startBlast(e.pageX - (pb2.prtMaxWidth/2), e.pageY - (pb2.prtMaxHeight/2));
+      pb.startBlast( e.pageX,  e.pageY );
+      // pb2.startBlast(e.pageX - (pb2.prtMaxWidth/2), e.pageY - (pb2.prtMaxHeight/2));
     });
   </script>
 </body>
