@@ -109,7 +109,6 @@ class Particle {
     // Opacity
     // // TODO, currently LINEAR, figure out how to make this a cubic-bezier or ease-out or whatever
     const currOpacity = this.opacity - ((this.opacity - this.endOpacity) * lifetimeFactor);
-    console.log("this.opacity ::", this.opacity);
     
 
     // Set Color/Opacity
