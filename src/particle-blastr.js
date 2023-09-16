@@ -27,7 +27,7 @@ class Particle {
     this.startX = this.x;
     this.startY = this.y;
 
-    this.gravity    = cfg.gravity;
+    this.gravity    = cfg.gravity || 0;
     this.opacity    = cfg.opacity || 1;
     this.endOpacity = cfg.endOpacity || 0;
 
@@ -92,26 +92,21 @@ class Particle {
   }
 
   animate(ctx, lifetimeFactor) {
-    // this.liveTime = lifetimeFactor;
     // let lifetimeFactorInverse = 1 - lifetimeFactor; // lifetimeFactorInverse 1 approaches 0
 
-    // let newX  = this.x + (this.distX / this.liveTime);
-    // let newY  = this.y - (this.distY / this.liveTime);
-    // console.log("this.liveTime ::", this.liveTime);
-
-    // console.log("lifetimeFactor ::", lifetimeFactor);
     let newX = this.startX + (this.distX * lifetimeFactor); 
     let newY = this.startY - (this.distY * lifetimeFactor); 
 
     this.x = newX;
     this.y = newY;
 
-    //Gravity
-    // // TODO, factor in upward Y speed of particle
-    // this.y += this.gravity * lifetimeFactor; // lifetimeFactor 0 Approaches 1
-    let currGravityEffect = this.gravity * lifetimeFactor; // lifetimeFactor 0 Approaches 1
-    currGravityEffect     = currGravityEffect * (this.upwardThrustFactor * lifetimeFactor);
-    this.y += currGravityEffect
+    // Gravity
+    // I'm not entirely sure why this math works the way I want it to in execution.
+    // Which means I'm not sure why my gravity numbers need to be so high.
+    let currGravityEffect;
+    currGravityEffect = this.gravity * lifetimeFactor; // lifetimeFactor 0 Approaches 1
+    currGravityEffect = currGravityEffect * (this.upwardThrustFactor * lifetimeFactor);
+    this.y += currGravityEffect;
 
     // Opacity
     // // TODO, currently LINEAR, figure out how to make this a cubic-bezier or ease-out or whatever
@@ -130,7 +125,8 @@ class Particle {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
       ctx.fill();
-    } else {
+    } else { 
+      // RECT or SQUARE
       ctx.fillRect(this.x, this.y, this.width, this.height);  
     }
   }
@@ -150,7 +146,6 @@ class Particle {
       if (isYNeg) distXY.y = distXY.y * -1;
     }
 
-    console.log("distXY ::", distXY);
     this.distX = distXY.x;
     this.distY = distXY.y;
   }
@@ -175,7 +170,7 @@ class ParticleBlastr {
   originY = 0;
 
   blastLengthMs = 1500;
-  gravity = 2;
+  gravity = 0;
 
 
   fillColor = 'pink'; // Pink for debug.
@@ -219,7 +214,6 @@ class ParticleBlastr {
     this.ctx    = this.canvas.getContext('2d');
 
     //
-    // console.log("this.ctx ::", this.ctx);
     this.ctx.fillStyle = `#ff0000`;
     this.ctx.fillRect(200, 200, 15, 15);
     this.ctx.fillText('Canvas context is functional.', 223, 214)
@@ -272,6 +266,7 @@ class ParticleBlastr {
     if (ParticleBlastr.util.isDef(cfg.particleBorderRadius)) this.pBorderRadius = cfg.particleBorderRadius; 
 
     if (ParticleBlastr.util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
+
     if (ParticleBlastr.util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
 
     if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
@@ -359,9 +354,6 @@ class ParticleBlastr {
       } else {
         pCfg.dist = Math.random() * this.pMaxDist;
       }
-
-      console.log("this.pMinDist ::", this.pMinDist);
-      console.log("pCfg.dist ::", pCfg.dist);
       
 
       pCfg.gravity   = this.pGravity;

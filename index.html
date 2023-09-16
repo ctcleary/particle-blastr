@@ -67,14 +67,15 @@
     // ctx.fillRect(100, 100, 15, 15);
     //
 
-    const gravity = 22;
+    // const gravity = 22;
     // const gravity = 122;
+    const gravity = 802;
     // const gravity = 42;
     // const gravity = 8;
-    // const gravity = -8;
+    // const gravity = -480;
     // const gravity = 160;
 
-    const gravityVariance = 6;
+    const gravityVariance = 200;
 
     // const blastLength = 2600;
     const blastLength = 1600;
@@ -85,7 +86,7 @@
       canvas: document.getElementById('canvas1'),
       
       // particleCount: 100,
-      particleCount: 200,
+      particleCount: 1000,
       // particleCount: 5,
 
       // particleColor: [255,60,0], 
@@ -102,17 +103,17 @@
       //   [255,0,255]
       // ],
 
-      // particleColors: [
-      //   [235, 255,  0],
-      //   [255, 190, 75],
-      //   [220,  60, 10]
-      // ],
-
       particleColors: [
-        [  0, 120, 225],
-        [  0, 180, 225],
-        [  5, 100, 240]
+        [235, 255,  0],
+        [255, 190, 75],
+        [220,  60, 10]
       ],
+
+      // particleColors: [
+      //   [  0, 120, 225],
+      //   [  0, 180, 225],
+      //   [  5, 100, 240]
+      // ],
 
 
       particleOpactiy: 1,
@@ -141,8 +142,8 @@
       sizeVariance: 4,
 
       particleMaxDistance: 400,
-      particleMinDistance: 200,
-            
+      // particleMinDistance: 200,
+
       allowNegY: true,
 
       blastLengthMs: blastLength,
