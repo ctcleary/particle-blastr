@@ -59,6 +59,11 @@
 
   <script type="text/javascript" src="src/particle-blastr.js"></script>
   <script type="text/javascript">
+    let doDebug = false;
+    if (window.location.href.indexOf('localhost') !== -1) {
+      doDebug = true;
+    }
+
 
     let canvas1 = document.getElementById('canvas1');
     let ctx    = canvas1.getContext('2d');
@@ -86,7 +91,7 @@
       canvas: document.getElementById('canvas1'),
       
       // particleCount: 100,
-      particleCount: 1000,
+      particleCount: 300,
       // particleCount: 5,
 
       // particleColor: [255,60,0], 
@@ -116,7 +121,8 @@
       // ],
 
 
-      particleOpactiy: 1,
+      // particleOpacity: 1,
+      particleOpacity: 0.35,
       particleEndOpacity: 0,
 
 
@@ -158,6 +164,8 @@
       // particleEndColor: [0, 0, 0],
       // particleEndColors: [],
     });
+
+    pb.doDebug = doDebug;
 
     // const pb2 = new ParticleBlastr({
     //   cvs: document.getElementById('canvas2'),

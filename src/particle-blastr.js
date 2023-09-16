@@ -11,14 +11,12 @@ class Particle {
   height = 10;
   borderRadius = 50;
 
-  fillColor = 'rgb(255, 0, 255)';
+  fillColor = [255,  0, 255]; // Pink for debug
   opacity = 1;
 
   shape = ParticleBlastr.SHAPE.CIRCLE;
 
   upwardThrustFactor;
-
-  // background = '#000000';
 
   constructor(cfg) {
     this.x = cfg.x;
@@ -111,6 +109,7 @@ class Particle {
     // Opacity
     // // TODO, currently LINEAR, figure out how to make this a cubic-bezier or ease-out or whatever
     const currOpacity = this.opacity - ((this.opacity - this.endOpacity) * lifetimeFactor);
+    console.log("this.opacity ::", this.opacity);
     
 
     // Set Color/Opacity
@@ -160,6 +159,8 @@ class Particle {
 
 
 class ParticleBlastr {
+  doDebug = false;
+
   canvas;
   ctx;
 
@@ -378,7 +379,7 @@ class ParticleBlastr {
   }
 
   startBlast(centerX, centerY) {
-    console.log("start blast!", centerX, centerY);
+    if (this.doDebug) console.log("Start blast! At:", centerX, centerY);
     this.originX = centerX;
     this.originY = centerY;
 
@@ -412,7 +413,7 @@ class ParticleBlastr {
 
     // Kill loop if done.
     if (overtime) {
-      console.log("overtime!");
+      if (this.doDebug) console.log("Overtime! Reset ParticleBlastr.");
       this.reset();
     } else {
       requestAnimationFrame(() => { this.handleFrame() });
