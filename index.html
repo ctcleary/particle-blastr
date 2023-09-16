@@ -74,6 +74,7 @@
     // const gravity = -8;
     // const gravity = 160;
 
+    // const blastLength = 2600;
     const blastLength = 1600;
     // const blastLength = 800;
     // const blastLength = 450;
@@ -81,23 +82,33 @@
     const pb = new ParticleBlastr({
       canvas: document.getElementById('canvas1'),
       
-      particleCount: 100,
-      // numPrts: 1500,
+      // particleCount: 100,
+      particleCount: 200,
 
-      // particleColor: 'rgba(255, 60, 0, 0.75)',
-      // particleColor: 'rgba(255, 0, 0, 0.35)',
-      // particleColor: [255,60,0], //'rgba(255, 0, 0, 0.35)',
-      // particleColor: [255,0,255], //'rgba(255, 0, 0, 0.35)',
-      // particleColor: [255,255,0], //'rgba(255, 0, 0, 0.35)',
-      // particleColor: [0,255,255], //'rgba(255, 0, 0, 0.35)',
+      // particleColor: [255,60,0], 
+      // particleColor: [255,0,255],
+      // particleColor: [255,255,0],
+      // particleColor: [0,255,255],
+
+      // particleColors: [
+      //   [255,0,0],
+      //   [0,255,0],
+      //   [0,0,255],
+      //   [255,255,0],
+      //   [0,255,255],
+      //   [255,0,255]
+      // ],
+
+      // particleColors: [
+      //   [235, 255,  0],
+      //   [255, 190, 75],
+      //   [220,  60, 10]
+      // ],
 
       particleColors: [
-        [255,0,0],
-        [0,255,0],
-        [0,0,255],
-        [255,255,0],
-        [0,255,255],
-        [255,0,255]
+        [  0, 120, 225],
+        [  0, 180, 225],
+        [  5, 100, 240]
       ],
 
 
@@ -105,8 +116,9 @@
       particleEndOpacity: 0,
 
 
-      // shape: ParticleBlastr.SHAPE.SQUARE,
-      // particleSize: 20,
+
+      shape: ParticleBlastr.SHAPE.SQUARE,
+      particleSize: 20,
 
       // shape: ParticleBlastr.SHAPE.RECT,
       // particleWidth:  35,
@@ -117,17 +129,29 @@
       // particleHeight: 20,
       // particleBorderRadius: 30,
 
-      shape: ParticleBlastr.SHAPE.CIRCLE,
-      particleRadius: 10,
+      // shape: ParticleBlastr.SHAPE.CIRCLE,
+      // particleRadius: 8,
 
-      particleMaxDistance: 6800,
+
+      particleMaxDistance: 4900,
       allowNegY: true,
 
       blastLengthMs: blastLength,
       
-      // gravity: 0
       gravity: gravity,
-      // gravityVariance: true
+
+      // TODO end states
+      // particleEndSize: 0,
+      // particleEndColor: [0, 0, 0],
+      // particleEndColors: [],
+
+      // TODO min distance
+      // particleMinDist: 1200,
+
+
+      // TODO variance
+      // sizeVariance: 0.25,
+      // gravityVariance: 0.45,
 
     });
 
@@ -150,7 +174,8 @@
     // });
 
 
-    document.addEventListener('click', (e) => {
+    // document.addEventListener('click', (e) => {
+    canvas1.addEventListener('click', (e) => {
       pb.startBlast( e.pageX,  e.pageY );
       // pb2.startBlast(e.pageX - (pb2.prtMaxWidth/2), e.pageY - (pb2.prtMaxHeight/2));
     });

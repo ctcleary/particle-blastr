@@ -57,10 +57,9 @@ class Particle {
 
     this.dist = cfg.dist;
     this.resetDist();
-    this.upwardThrustFactor = this.determineUpwardThrust();
-    console.log("this.upwardThrustFactor ::", this.upwardThrustFactor);
+    this.upwardThrustFactor = this.determineUpwardThrustFactor();
 
-    this.shape = cfg.shape;
+    this.shape = cfg.shape;  // Required
 
     this.width  = cfg.width;
     this.height = cfg.height;
@@ -96,7 +95,7 @@ class Particle {
     return destXY;
   }
 
-  determineUpwardThrust() {
+  determineUpwardThrustFactor() {
     let upwardThrust;
     let upwardThrustFactor;
 
@@ -116,7 +115,6 @@ class Particle {
   }
 
   animate(ctx, lifetimeFactor) {
-    console.log("animate!");
     // let lifetimeFactorInverse = 1 - lifetimeFactor; // lifetimeFactorInverse 1 approaches 0
 
     this.x = this.x + (this.distX / this.liveTime);
@@ -237,7 +235,6 @@ class ParticleBlastr {
 
     if (cfg.shape) this.pShape = cfg.shape;
 
-    console.log("this.pShape ::", this.pShape);
     switch (this.pShape) {
       case ParticleBlastr.SHAPE.RECT:
         this.pDimensions.width  = cfg.particleWidth;
@@ -274,7 +271,6 @@ class ParticleBlastr {
 
     this.pOpacity    = cfg.particleOpacity || 1;
     this.pEndOpacity = cfg.particleEndOpacity || 0;
-    console.log("this.pEndOpacity ::", this.pEndOpacity);
 
     if (cfg.particleMaxDistance)    this.pMaxDist = cfg.particleMaxDistance;
 
@@ -312,7 +308,6 @@ class ParticleBlastr {
       pCfg.shape = this.pShape;
 
       if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
-        console.log("this.pDimensions.radius ::", this.pDimensions.radius);
         pCfg.radius = this.pDimensions.radius;
       } else if (this.pShape == ParticleBlastr.SHAPE.ROUND_RECT) {
         pCfg.width  = this.pDimensions.width;
@@ -326,8 +321,11 @@ class ParticleBlastr {
       // Randomized values:
         // TODO improve clamping so there isn't a visible "ring" of particles at the min clamp dist
         // dist: util.clamp( this.pMaxDist * Math.random(), this.pMaxDist/2, this.pMaxDist),
-      pCfg.dist      = util.clamp( Math.random() * this.pMaxDist, this.pMaxDist/2, this.pMaxDist);
-      pCfg.gravity   = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity);
+      let halfDist = this.pMaxDist/2;
+      // pCfg.dist      = this.pMaxDist;
+      pCfg.dist      = util.clamp( Math.random() * this.pMaxDist, this.pMaxDist/3, this.pMaxDist);
+      pCfg.gravity   = this.pGravity;
+      // pCfg.gravity   = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity);
       pCfg.fillColor = !this.fillColors.length > 0 ? this.fillColor : util.randomItem(this.fillColors);
 
       if (this.pGravityVariance) {
@@ -381,17 +379,6 @@ class ParticleBlastr {
     } else {
       requestAnimationFrame(() => { this.handleFrame() });
     }
-  }
-  
-  distance(distX, distY, x, y) {
-    const x1 = distX;
-    const y1 = distY;
-    const x2 = x;
-    const y2 = y;
-    // const dist = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    const dist = Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
-
-    return dist;
   }
 
   reset() {
