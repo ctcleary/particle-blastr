@@ -1,26 +1,3 @@
-window.util = {
-  roundRand: function(maxNum) {
-    return Math.round(Math.random() * maxNum);
-  },
-
-  clamp: function(num, min, max) {
-    return Math.min(Math.max(num, min), max);
-  },
-
-  isDef: function(toCheck) {
-    return typeof toCheck !== 'undefined';
-  },
-
-  randomItem(arrOrStr) {
-    return arrOrStr[ Math.round( Math.random() * (arrOrStr.length-1) )];
-  }
-}
-
-
-
-
-
-
 class Particle {
   startX = 0;
   startY = 0;
@@ -102,7 +79,7 @@ class Particle {
     upwardThrust = this.distY - this.startY;
     upwardThrustFactor = this.distY / this.dist;
 
-    upwardThrustFactor = util.clamp(upwardThrustFactor, 0.45, 0.65); // clamp max upwardThrustFactor variance
+    upwardThrustFactor = ParticleBlastr.util.clamp(upwardThrustFactor, 0.45, 0.65); // clamp max upwardThrustFactor variance
 
     return upwardThrustFactor;
   }
@@ -159,15 +136,15 @@ class Particle {
   }
 
   resetDist() {
-    this.distX = util.roundRand(this.dist);
-    this.distY = util.roundRand(this.dist);
+    this.distX = ParticleBlastr.util.roundRand(this.dist);
+    this.distY = ParticleBlastr.util.roundRand(this.dist);
 
     const distXY = this.clampToCircle(this.x, this.y, this.distX, this.distY);
 
     const isNeg = Math.random() > 0.5;
     if (isNeg) distXY.x = distXY.x * -1;
 
-    if (util.isDef(this.allowNegY) && this.allowNegY) {
+    if (ParticleBlastr.util.isDef(this.allowNegY) && this.allowNegY) {
       const isYNeg = Math.random() > 0.5;
 
       if (isYNeg) distXY.y = distXY.y * -1;
@@ -292,10 +269,10 @@ class ParticleBlastr {
     if (cfg.particleMaxDistance) this.pMaxDist = cfg.particleMaxDistance;
     if (cfg.particleMinDistance) this.pMinDist = cfg.particleMinDistance;
 
-    if (util.isDef(cfg.particleBorderRadius)) this.pBorderRadius = cfg.particleBorderRadius; 
+    if (ParticleBlastr.util.isDef(cfg.particleBorderRadius)) this.pBorderRadius = cfg.particleBorderRadius; 
 
-    if (util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
-    if (util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
+    if (ParticleBlastr.util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
+    if (ParticleBlastr.util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
 
     if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
 
@@ -339,7 +316,7 @@ class ParticleBlastr {
           let newRadius = pCfg.radius;
 
           newRadius = this.addOrSubtract(newRadius, changeBy);
-          newRadius = util.clamp( newRadius, 1, pCfg.radius + changeBy);
+          newRadius = ParticleBlastr.util.clamp( newRadius, 1, pCfg.radius + changeBy);
           
           pCfg.radius = newRadius;
 
@@ -348,10 +325,10 @@ class ParticleBlastr {
           let newHeight = pCfg.height;
 
           newWidth  = this.addOrSubtract(newWidth, changeBy);
-          newWidth  = util.clamp(newWidth, 1, pCfg.width + changeBy);
+          newWidth  = ParticleBlastr.util.clamp(newWidth, 1, pCfg.width + changeBy);
 
           newHeight = this.addOrSubtract(newHeight, changeBy);
-          newHeight = util.clamp(newHeight, 1, pCfg.height + changeBy);
+          newHeight = ParticleBlastr.util.clamp(newHeight, 1, pCfg.height + changeBy);
 
           pCfg.width  = newWidth;
           pCfg.height = newHeight;
@@ -360,7 +337,7 @@ class ParticleBlastr {
           let newSize = pCfg.width;
 
           newSize = this.addOrSubtract(newSize, changeBy);
-          newSize = util.clamp(newSize, 1, pCfg.width + changeBy);
+          newSize = ParticleBlastr.util.clamp(newSize, 1, pCfg.width + changeBy);
           
           pCfg.width  = newSize;
           pCfg.height = newSize;
@@ -369,8 +346,19 @@ class ParticleBlastr {
 
       // Randomized values:
         // TODO improve clamping so there isn't a visible "ring" of particles at the min clamp dist at large pNums
-        // dist: util.clamp( this.pMaxDist * Math.random(), this.pMaxDist/2, this.pMaxDist),
-      pCfg.dist      = util.clamp( Math.random() * this.pMaxDist, this.pMinDist, this.pMaxDist);
+        // dist: this.util.clamp( this.pMaxDist * Math.random(), this.pMaxDist/2, this.pMaxDist),
+      
+
+      if (this.pMinDist) {
+        let newDist = this.pMinDist;
+
+        newDist = ParticleBlastr.util.randomNumberBetween(this.pMinDist, this.pMaxDist);
+
+        pCfg.dist = newDist;
+
+      } else {
+        pCfg.dist = Math.random() * this.pMaxDist;
+      }
 
       console.log("this.pMinDist ::", this.pMinDist);
       console.log("pCfg.dist ::", pCfg.dist);
@@ -383,10 +371,10 @@ class ParticleBlastr {
 
         newGravity = this.addOrSubtract(newGravity, gravChangeBy);
 
-        pCfg.gravity = util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
+        pCfg.gravity = ParticleBlastr.util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
       }
 
-      pCfg.fillColor = !this.fillColors.length > 0 ? this.fillColor : util.randomItem(this.fillColors);
+      pCfg.fillColor = !this.fillColors.length > 0 ? this.fillColor : ParticleBlastr.util.randomItem(this.fillColors);
 
       const p = new Particle(pCfg);
       this.prts.push(p);
@@ -427,7 +415,7 @@ class ParticleBlastr {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     this.prts.forEach((p) => {
-      p.animate(this.ctx, util.clamp(lifetimeFactor, 0, 1));
+      p.animate(this.ctx, ParticleBlastr.util.clamp(lifetimeFactor, 0, 1));
     });
 
     // Kill loop if done.
@@ -444,5 +432,29 @@ class ParticleBlastr {
     this.#isLooping = false;
 
     this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+  }
+
+  // UTIL
+
+  static util = {
+    roundRand: function(maxNum) {
+      return Math.round(Math.random() * maxNum);
+    },
+
+    clamp: function(num, min, max) {
+      return Math.min(Math.max(num, min), max);
+    },
+
+    isDef: function(toCheck) {
+      return typeof toCheck !== 'undefined';
+    },
+
+    randomItem(arrOrStr) {
+      return arrOrStr[ Math.round( Math.random() * (arrOrStr.length-1) )];
+    },
+
+    randomNumberBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
   }
 }
