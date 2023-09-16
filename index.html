@@ -67,12 +67,14 @@
     // ctx.fillRect(100, 100, 15, 15);
     //
 
-    // const gravity = 0;
     const gravity = 22;
+    // const gravity = 122;
     // const gravity = 42;
     // const gravity = 8;
     // const gravity = -8;
     // const gravity = 160;
+
+    const gravityVariance = 18;
 
     // const blastLength = 2600;
     const blastLength = 1600;
@@ -117,28 +119,30 @@
 
 
 
-      shape: ParticleBlastr.SHAPE.SQUARE,
-      particleSize: 20,
+      // shape: ParticleBlastr.SHAPE.SQUARE,
+      // particleSize: 20,
 
       // shape: ParticleBlastr.SHAPE.RECT,
       // particleWidth:  35,
       // particleHeight: 20,
 
-      // shape: ParticleBlastr.SHAPE.ROUND_RECT,
-      // particleWidth:  35,
-      // particleHeight: 20,
-      // particleBorderRadius: 30,
+      shape: ParticleBlastr.SHAPE.ROUND_RECT,
+      particleWidth:  35,
+      particleHeight: 20,
+      particleBorderRadius: 30,
 
       // shape: ParticleBlastr.SHAPE.CIRCLE,
       // particleRadius: 8,
 
+      sizeVariance: 10,
 
       particleMaxDistance: 4900,
-      allowNegY: true,
+      // allowNegY: true,
 
       blastLengthMs: blastLength,
       
       gravity: gravity,
+      gravityVariance: gravityVariance,
 
       // TODO end states
       // particleEndSize: 0,
@@ -147,11 +151,6 @@
 
       // TODO min distance
       // particleMinDist: 1200,
-
-
-      // TODO variance
-      // sizeVariance: 0.25,
-      // gravityVariance: 0.45,
 
     });
 

@@ -203,7 +203,8 @@ class ParticleBlastr {
     width: 10,
     height: 10,
     borderRadius: 25,
-    radius: 5
+    radius: 5,
+    sizeVariance: 0,
   }
 
   pRadius = 5
@@ -257,6 +258,8 @@ class ParticleBlastr {
         break;
     }
 
+    if (cfg.sizeVariance) this.sizeVariance = cfg.sizeVariance;
+
 
     if (cfg.particleCount) this.numPrts   = cfg.particleCount;
     // if (cfg.particleCount) this.numPrts   = 10;
@@ -273,11 +276,14 @@ class ParticleBlastr {
     this.pEndOpacity = cfg.particleEndOpacity || 0;
 
     if (cfg.particleMaxDistance)    this.pMaxDist = cfg.particleMaxDistance;
+    // TODO minDistance
 
     if (util.isDef(cfg.particleBorderRadius)) this.pBorderRadius = cfg.particleBorderRadius; 
 
     if (util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
     if (util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
+
+    if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
 
 
     if (cfg.blastLengthMs) this.blastLengthMs = cfg.blastLengthMs;
@@ -300,11 +306,6 @@ class ParticleBlastr {
 
 
     for (let i = 0; i < this.numPrts; i++) {
-      // TODO add sizeVariance option
-        // TODO add size variance option
-        // min w/h is 1/2 of max
-        // width:  util.clamp( util.roundRand(this.pWidth),  this.pWidth/2,  this.pWidth ), 
-        // height: util.clamp( util.roundRand(this.pHeight), this.pHeight/2, this.pHeight ),
       pCfg.shape = this.pShape;
 
       if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
@@ -318,25 +319,71 @@ class ParticleBlastr {
         pCfg.height = this.pDimensions.height;
       }
 
+      if (this.sizeVariance) {
+
+        const changeBy = Math.random() * this.sizeVariance;
+        if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
+          let newRadius = pCfg.radius;
+
+          newRadius = this.addOrSubtract(newRadius, changeBy);
+          
+          pCfg.radius = newRadius;
+
+        } else if (this.pShape == ParticleBlastr.SHAPE.ROUND_RECT || this.pShape == ParticleBlastr.SHAPE.RECT) {
+          let newWidth = pCfg.width;
+          let newHeight = pCfg.height;
+
+          newWidth  = this.addOrSubtract(newWidth, changeBy);
+          newHeight = this.addOrSubtract(newHeight, changeBy);
+
+          pCfg.width  = newWidth;
+          pCfg.height = newHeight;
+
+        } else if (this.pShape == ParticleBlastr.SHAPE.SQUARE) {
+          let newSize = pCfg.width;
+
+          newSize = this.addOrSubtract(newSize, changeBy);
+          
+          pCfg.width = newSize;
+          pCfg.height = newSize;
+        }
+      }
+
       // Randomized values:
-        // TODO improve clamping so there isn't a visible "ring" of particles at the min clamp dist
+        // TODO improve clamping so there isn't a visible "ring" of particles at the min clamp dist at large pNums
         // dist: util.clamp( this.pMaxDist * Math.random(), this.pMaxDist/2, this.pMaxDist),
-      let halfDist = this.pMaxDist/2;
-      // pCfg.dist      = this.pMaxDist;
       pCfg.dist      = util.clamp( Math.random() * this.pMaxDist, this.pMaxDist/3, this.pMaxDist);
+      
+
       pCfg.gravity   = this.pGravity;
+      // console.log("pCfg.gravity ::", pCfg.gravity);
+      if (this.pGravityVariance) {
+        let newGravity = pCfg.gravity;
+        let gravChangeBy = Math.random() * this.pGravityVariance;
+
+        newGravity = this.addOrSubtract(newGravity, gravChangeBy);
+        console.log("newGravity ::", newGravity);
+
+        pCfg.gravity = util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
+      }
+
+
       // pCfg.gravity   = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity);
       pCfg.fillColor = !this.fillColors.length > 0 ? this.fillColor : util.randomItem(this.fillColors);
 
-      if (this.pGravityVariance) {
-        pCfg.gravity = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity );
-      } else {
-        pCfg.gravity = this.pGravity;
-      }
+      // if (this.pGravityVariance) {
+      //   pCfg.gravity = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity );
+      // } else {
+      //   pCfg.gravity = this.pGravity;
+      // }
 
       const p = new Particle(pCfg);
       this.prts.push(p);
     }
+  }
+
+  addOrSubtract(number, changeBy) {
+    return (Math.random() > 0.5) ? number + changeBy : number - changeBy;
   }
 
   startBlast(centerX, centerY) {
