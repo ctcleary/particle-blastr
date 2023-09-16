@@ -366,7 +366,13 @@ class ParticleBlastr {
         pCfg.gravity = ParticleBlastr.util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
       }
 
-      pCfg.fillColor = !this.fillColors.length > 0 ? this.fillColor : ParticleBlastr.util.randomItem(this.fillColors);
+      if (this.fillColors && this.fillColors.length > 0) {
+        pCfg.fillColor = ParticleBlastr.util.randomItem(this.fillColors);
+      } else if (this.fillColor) {
+        pCfg.fillColor = this.fillColor;
+      } else {
+        console.warn('Bad config. ParticleBlastr needs either a particleColor array or particleColors array.')
+      }
 
       const p = new Particle(pCfg);
       this.prts.push(p);
