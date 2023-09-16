@@ -326,6 +326,7 @@ class ParticleBlastr {
           let newRadius = pCfg.radius;
 
           newRadius = this.addOrSubtract(newRadius, changeBy);
+          newRadius = util.clamp( newRadius, 1, pCfg.radius + changeBy);
           
           pCfg.radius = newRadius;
 
@@ -334,7 +335,10 @@ class ParticleBlastr {
           let newHeight = pCfg.height;
 
           newWidth  = this.addOrSubtract(newWidth, changeBy);
+          newWidth  = util.clamp(newWidth, 1, pCfg.width + changeBy);
+
           newHeight = this.addOrSubtract(newHeight, changeBy);
+          newHeight = util.clamp(newHeight, 1, pCfg.height + changeBy);
 
           pCfg.width  = newWidth;
           pCfg.height = newHeight;
@@ -343,8 +347,9 @@ class ParticleBlastr {
           let newSize = pCfg.width;
 
           newSize = this.addOrSubtract(newSize, changeBy);
+          newSize = util.clamp(newSize, 1, pCfg.width + changeBy);
           
-          pCfg.width = newSize;
+          pCfg.width  = newSize;
           pCfg.height = newSize;
         }
       }
@@ -356,7 +361,6 @@ class ParticleBlastr {
       
 
       pCfg.gravity   = this.pGravity;
-      // console.log("pCfg.gravity ::", pCfg.gravity);
       if (this.pGravityVariance) {
         let newGravity = pCfg.gravity;
         let gravChangeBy = Math.random() * this.pGravityVariance;
@@ -367,15 +371,7 @@ class ParticleBlastr {
         pCfg.gravity = util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
       }
 
-
-      // pCfg.gravity   = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity);
       pCfg.fillColor = !this.fillColors.length > 0 ? this.fillColor : util.randomItem(this.fillColors);
-
-      // if (this.pGravityVariance) {
-      //   pCfg.gravity = util.clamp( Math.random() * this.pGravity, this.pGravity/2, this.pGravity );
-      // } else {
-      //   pCfg.gravity = this.pGravity;
-      // }
 
       const p = new Particle(pCfg);
       this.prts.push(p);
