@@ -7,8 +7,8 @@ class Particle {
   endX = 100;
   endY = 100;
 
-  width = 10;
-  height = 10;
+  width;
+  height;
   borderRadius = 50;
 
   fillColor = [255,  0, 255]; // Pink for debug
@@ -123,9 +123,13 @@ class Particle {
     ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${currOpacity})`;
 
     if (this.img) {
-      ctx.drawImage(this.img, this.x, this.y);
-      // TODO custom sizing // probably need to add this in makePrts in Blastr class
-      // ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      if (this.width && this.height) {
+        // console.log("this.width, this.height ::", this.width, this.height);
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        // ctx.drawImage(this.img, this.x, this.y, 10, 10);
+      } else {
+        ctx.drawImage(this.img, this.x, this.y);
+      }
     } else if (this.shape == ParticleBlastr.SHAPE.ROUND_RECT) {
       ctx.beginPath();
       ctx.roundRect(this.x, this.y, this.width, this.height, this.borderRadius);
@@ -193,13 +197,14 @@ class ParticleBlastr {
   pSize = 20;
   pBorderRadius = 50;
 
-  pShape = ParticleBlastr.CIRCLE;
+  pShape = ParticleBlastr.SHAPE.CIRCLE;
   pDimensions = {
     width: 10,
     height: 10,
     borderRadius: 25,
     radius: 5,
     sizeVariance: 0,
+    proportionalSizeVariance: true
   }
 
   pRadius = 5
@@ -215,12 +220,12 @@ class ParticleBlastr {
 
   #currRotation = 0;
 
-  // TODO implement
   static SHAPE = {
     SQUARE: 'square', // e.g. for faux "pixel-bursts"
     RECT: 'rect',
     ROUND_RECT: 'roundRect',
     CIRCLE: 'circle',
+    IMAGE: 'image' // required 'particleImage' config key/value
   };
 
   constructor(cfg = {}) {
@@ -235,7 +240,12 @@ class ParticleBlastr {
     }
     //
 
+    if (cfg.particleCount) this.numPrts   = cfg.particleCount;
     if (cfg.shape) this.pShape = cfg.shape;
+
+    if (!this.pShape) {
+        console.warn('Bad config for ParticleBlastr. {shape} required.');
+    }
 
     switch (this.pShape) {
       case ParticleBlastr.SHAPE.RECT:
@@ -254,21 +264,21 @@ class ParticleBlastr {
       case ParticleBlastr.SHAPE.CIRCLE:
         this.pDimensions.radius = cfg.particleRadius;
         break;
+      case ParticleBlastr.SHAPE.IMAGE:
+        this.pImg = cfg.particleImg;
+        this.pDimensions.width  = cfg.particleWidth;
+        this.pDimensions.height = cfg.particleHeight;
+        break;
       default:
         console.warn('Bad config for ParticleBlastr. {shape} required.');
         break;
     }
 
     if (cfg.sizeVariance) this.sizeVariance = cfg.sizeVariance;
+    if (cfg.proportionalSizeVariance) this.proportionalSizeVariance = cfg.proportionalSizeVariance
+      console.log("this.proportionalSizeVariance ::", this.proportionalSizeVariance);;
 
-
-    if (cfg.particleCount) this.numPrts   = cfg.particleCount;
-    // if (cfg.particleCount) this.numPrts   = 10;
-
-    // particleImg takes precedence
-    if (cfg.particleImg) {
-      this.pImg = cfg.particleImg;
-    } else {
+    if (this.pShape != ParticleBlastr.SHAPE.IMAGE) {
       if (cfg.particleColor) {
         this.fillColor = cfg.particleColor;
         this.fillColors = null;
@@ -284,13 +294,10 @@ class ParticleBlastr {
     if (cfg.particleMaxDistance) this.pMaxDist = cfg.particleMaxDistance;
     if (cfg.particleMinDistance) this.pMinDist = cfg.particleMinDistance;
 
-    if (ParticleBlastr.util.isDef(cfg.particleBorderRadius)) this.pBorderRadius = cfg.particleBorderRadius; 
-
     if (ParticleBlastr.util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
+    if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
 
     if (ParticleBlastr.util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
-
-    if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
 
     if (cfg.blastLengthMs) this.blastLengthMs = cfg.blastLengthMs;
 
@@ -314,21 +321,25 @@ class ParticleBlastr {
     for (let i = 0; i < this.numPrts; i++) {
       pCfg.shape = this.pShape;
 
-      if (this.pImg) {
-        pCfg.img = this.pImg;
-      } else if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
-        pCfg.radius = this.pDimensions.radius;
-      } else if (this.pShape == ParticleBlastr.SHAPE.ROUND_RECT) {
-        pCfg.width  = this.pDimensions.width;
-        pCfg.height = this.pDimensions.height;
-        pCfg.borderRadius = this.pDimensions.borderRadius;
-      } else {
-        pCfg.width  = this.pDimensions.width;
-        pCfg.height = this.pDimensions.height;
+
+      switch (this.pShape) {
+        case ParticleBlastr.SHAPE.CIRCLE:
+          pCfg.radius = this.pDimensions.radius;
+          break;
+        case ParticleBlastr.SHAPE.ROUND_RECT:
+          pCfg.borderRadius = this.pDimensions.borderRadius;
+          break;
+        case ParticleBlastr.SHAPE.IMAGE: 
+          pCfg.img = this.pImg;
+          break;
+      }
+
+      if (this.pShape != ParticleBlastr.SHAPE.CIRCLE) {
+          pCfg.width  = this.pDimensions.width;
+          pCfg.height = this.pDimensions.height;
       }
 
       if (this.sizeVariance) {
-
         const changeBy = Math.random() * this.sizeVariance;
         if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
           let newRadius = pCfg.radius;
@@ -338,14 +349,22 @@ class ParticleBlastr {
           
           pCfg.radius = newRadius;
 
-        } else if (this.pShape == ParticleBlastr.SHAPE.ROUND_RECT || this.pShape == ParticleBlastr.SHAPE.RECT) {
+        } else if (this.pShape == ParticleBlastr.SHAPE.ROUND_RECT || 
+                    this.pShape == ParticleBlastr.SHAPE.RECT ||
+                    this.pShape == ParticleBlastr.SHAPE.IMAGE) {
           let newWidth = pCfg.width;
           let newHeight = pCfg.height;
 
-          newWidth  = this.addOrSubtract(newWidth, changeBy);
-          newWidth  = ParticleBlastr.util.clamp(newWidth, 1, pCfg.width + changeBy);
+          if (this.proportionalSizeVariance) { // width and height change by the same amount
+            let add = Math.random() > 0.5;
+            newWidth  = add ? newWidth + changeBy  : newWidth - changeBy;
+            newHeight = add ? newHeight + changeBy : newHeight - changeBy;
+          } else { // randomize width and height independently
+            newWidth  = this.addOrSubtract(newWidth, changeBy);
+            newHeight = this.addOrSubtract(newHeight, changeBy);
+          }
 
-          newHeight = this.addOrSubtract(newHeight, changeBy);
+          newWidth  = ParticleBlastr.util.clamp(newWidth, 1, pCfg.width + changeBy);
           newHeight = ParticleBlastr.util.clamp(newHeight, 1, pCfg.height + changeBy);
 
           pCfg.width  = newWidth;
