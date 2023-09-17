@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Particle Blastr - Hero</title>
+
+  <!-- @exclude -->
+  <!-- <script src="//localhost:35729/livereload.js"></script> -->
+  <!-- @endexclude -->
+
+  <link rel="stylesheet" type="text/css" href="vendor/normalize.css" />
+  <style type="text/css">
+    body {
+      box-sizing: border-box;
+      width:980px;
+      height:400px;
+
+      overflow: hidden;
+
+      font-family: monospace;
+
+      background: url('img/checkerboard_cell.jpg');
+      background-repeat: repeat;
+    }
+
+    #page-contents {
+      position: absolute;
+      display: block;
+      width: 980px;
+      height: 400px;
+
+      text-align: center;
+      margin: 0 auto;
+
+    }
+
+    #canvas1,
+    #canvas2,
+    #canvas3 {
+      position: relative;
+      display:inline-block;
+      top:0;
+      left:0;
+
+    }
+
+    canvas {
+
+      border: thin solid grey;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    #starParticle {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="page-contents">
+    <canvas id="canvas1" width="320" height="398"></canvas>
+    <canvas id="canvas2" width="320" height="398"></canvas>
+    <canvas id="canvas3" width="320" height="398"></canvas>
+
+    <!-- <h1>  Examples of Particle-Blastr in action! </h1> -->
+  </div>
+  <img id="starParticle" src="img/starParticle_20x20.png" />
+
+  <script type="text/javascript" src="src/particle-blastr.js"></script>
+  <script type="text/javascript">
+    const blastLength = 2000;
+
+    const pb1 = new ParticleBlastr({
+      canvas: document.getElementById('canvas1'),
+      
+      particleCount: 355,
+      particleColors: [
+        [ 30, 155,  10], //pine green
+        // [ 65, 150,  15], //pine green
+        // [ 65, 150,  15], //pine green
+        [215,  10,  10], // rich red
+        [ 35,  80, 235], // rich blue
+        [235, 235,  25], // rich yellow
+      ],
+
+      particleImg: document.getElementById('starParticle'),
+
+      shape: ParticleBlastr.SHAPE.CIRCLE,
+      particleRadius:  8,
+      // particleWidth:  8,
+      // particleHeight: 8,
+      // particleBorderRadius: 50,
+      sizeVariance: 8,
+
+      particleEndOpacity: 1,
+
+      particleMaxDistance: 580,
+      particleMinDistance: 40,
+      gravity: 1500,
+
+      blastLengthMs: 1250
+    });
+
+    function blastLoop1() {
+      setTimeout(blastLoop1, blastLength);
+      pb1.startBlast(150, 150);
+    }
+    blastLoop1();
+
+
+
+    const pb2 = new ParticleBlastr({
+      canvas: document.getElementById('canvas2'),
+      
+      particleCount: 300,
+
+      particleColors: [
+        [  0, 120, 225],
+        [  0, 180, 225],
+        [  5, 100, 240],
+        [160, 235, 255],
+      ],
+
+      shape: ParticleBlastr.SHAPE.SQUARE,
+      particleSize: 16,
+      sizeVariance: 3,
+
+      particleMaxDistance: 160,
+      particleMinDistance: 80,
+      allowNegY: true,
+
+      blastLengthMs: blastLength-1250,
+      
+      gravity: 0
+    });
+
+    function blastLoop2() {
+      setTimeout(blastLoop2, blastLength);
+      pb2.startBlast(150, 200);
+    }
+    blastLoop2();
+
+
+    const pb3 = new ParticleBlastr({
+      canvas: document.getElementById('canvas3'),
+      
+      particleCount: 750,
+      particleColor: [80, 80, 83],
+
+      particleOpacity: 0.2,
+      particleEndOpactiy: 0,
+
+      shape: ParticleBlastr.SHAPE.CIRCLE,
+      // particleRadius:  22,
+      particleRadius:  28,
+      sizeVariance: 12,
+
+      particleMaxDistance: 340,
+      particleMinDistance: 40,
+      allowNegY: true,
+
+      blastLengthMs: blastLength,
+      
+      gravity: -1200,
+      gravityVariance: 800
+    });
+
+    function blastLoop3() {
+      setTimeout(blastLoop3, blastLength);
+      pb3.startBlast(150, 310);
+    }
+    blastLoop3();
+  </script>
+</body>
+</html>

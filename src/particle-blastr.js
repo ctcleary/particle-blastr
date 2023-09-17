@@ -12,6 +12,7 @@ class Particle {
   borderRadius = 50;
 
   fillColor = [255,  0, 255]; // Pink for debug
+  img = null;
   opacity = 1;
 
   shape = ParticleBlastr.SHAPE.CIRCLE;
@@ -33,6 +34,12 @@ class Particle {
     this.dist = cfg.dist;
     this.resetDist();
     this.upwardThrustFactor = this.determineUpwardThrustFactor();
+
+    if (cfg.img) {
+      this.img = cfg.img;
+    } else {
+      //todo
+    }
 
     this.shape = cfg.shape;  // Required
 
@@ -115,7 +122,11 @@ class Particle {
     const rgb = this.fillColor;
     ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${currOpacity})`;
 
-    if (this.shape == ParticleBlastr.SHAPE.ROUND_RECT) {
+    if (this.img) {
+      ctx.drawImage(this.img, this.x, this.y);
+      // TODO custom sizing // probably need to add this in makePrts in Blastr class
+      // ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    } else if (this.shape == ParticleBlastr.SHAPE.ROUND_RECT) {
       ctx.beginPath();
       ctx.roundRect(this.x, this.y, this.width, this.height, this.borderRadius);
       ctx.fill();
@@ -173,8 +184,9 @@ class ParticleBlastr {
   gravity = 0;
 
 
-  fillColor = 'pink'; // Pink for debug.
+  fillColor = [255, 0, 255]; // Pink for debug.
   fillColors = [];
+  pImg;
 
   pWidth = 20;
   pHeight = 20;
@@ -201,6 +213,8 @@ class ParticleBlastr {
   done = false;
   #isLooping = false;
 
+  #currRotation = 0;
+
   // TODO implement
   static SHAPE = {
     SQUARE: 'square', // e.g. for faux "pixel-bursts"
@@ -214,9 +228,11 @@ class ParticleBlastr {
     this.ctx    = this.canvas.getContext('2d');
 
     //
-    this.ctx.fillStyle = `#ff0000`;
-    this.ctx.fillRect(200, 200, 15, 15);
-    this.ctx.fillText('Canvas context is functional.', 223, 214)
+    if (this.doDebug) {
+      this.ctx.fillStyle = `#ff0000`;
+      this.ctx.fillRect(200, 200, 15, 15);
+      this.ctx.fillText('Canvas context is functional.', 223, 214)
+    }
     //
 
     if (cfg.shape) this.pShape = cfg.shape;
@@ -249,12 +265,17 @@ class ParticleBlastr {
     if (cfg.particleCount) this.numPrts   = cfg.particleCount;
     // if (cfg.particleCount) this.numPrts   = 10;
 
-    if (cfg.particleColor) {
-      this.fillColor = cfg.particleColor;
-      this.fillColors = null;
-    } else if (cfg.particleColors) {
-      this.fillColors = cfg.particleColors;
-      this.fillColor = null;
+    // particleImg takes precedence
+    if (cfg.particleImg) {
+      this.pImg = cfg.particleImg;
+    } else {
+      if (cfg.particleColor) {
+        this.fillColor = cfg.particleColor;
+        this.fillColors = null;
+      } else if (cfg.particleColors) {
+        this.fillColors = cfg.particleColors;
+        this.fillColor = null;
+      }
     }
 
     this.pOpacity    = cfg.particleOpacity || 1;
@@ -293,7 +314,9 @@ class ParticleBlastr {
     for (let i = 0; i < this.numPrts; i++) {
       pCfg.shape = this.pShape;
 
-      if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
+      if (this.pImg) {
+        pCfg.img = this.pImg;
+      } else if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
         pCfg.radius = this.pDimensions.radius;
       } else if (this.pShape == ParticleBlastr.SHAPE.ROUND_RECT) {
         pCfg.width  = this.pDimensions.width;
@@ -390,6 +413,7 @@ class ParticleBlastr {
 
     this.done = false;
     this.startTime = performance.now();
+    this.#currRotation = 0;
     this.prepForLoop();
 
     if (!this.#isLooping) {
@@ -407,7 +431,7 @@ class ParticleBlastr {
 
   handleFrame() {
     const timeSinceStart = performance.now() - this.startTime;
-    const lifetimeFactor = (timeSinceStart / this.blastLengthMs);
+    const lifetimeFactor = (timeSinceStart / this.blastLengthMs); // lifetimeFactor 0 Approaches 1
     const overtime = timeSinceStart >= this.blastLengthMs;
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
