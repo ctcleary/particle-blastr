@@ -552,7 +552,6 @@ class ParticleBlastr {
           break;
         case ParticleBlastr.SHAPE.RECT:
         case ParticleBlastr.SHAPE.SQUARE:
-          console.log("pCfg.width, pCfg.height ::", pCfg.width, pCfg.height);
           p = new ParticleRect(pCfg)
           break;
         default:

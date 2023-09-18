@@ -59,7 +59,8 @@
       text-align: center;
     }
 
-    #starParticle {
+    #starParticle,
+    #smokeParticle {
       display: none;
     }
   </style>
@@ -79,6 +80,7 @@
     <!-- <h1>  Examples of Particle-Blastr in action! </h1> -->
   </div>
   <img id="starParticle" src="img/starParticle_20x20.png" />
+  <img id="smokeParticle" src="img/smokeParticle_100x100.png" />
 
   <script type="text/javascript" src="src/particle-blastr.js"></script>
   <script type="text/javascript">
@@ -99,8 +101,8 @@
 
       particleShape: ParticleBlastr.SHAPE.IMAGE,
       particleImg: document.getElementById('starParticle'),
-      particleWidth:  40,
-      particleHeight: 40,
+      particleWidth:  50,
+      particleHeight: 50,
       particleSizeVariance: 25,
       particleProportionalSizeVariance: true,
 
@@ -156,17 +158,24 @@
     const pb3 = new ParticleBlastr({
       canvas: document.getElementById('canvas3'),
       
-      particleCount: 750,
+      // particleCount: 750,
+      particleCount: 450,
       particleColor: [80, 80, 83],
 
       particleOpacity: 0.2,
       particleEndOpactiy: 0,
 
-      particleShape: ParticleBlastr.SHAPE.CIRCLE,
-      particleRadius:  5,
-      particleSizeVariance: 10,
+      // particleShape: ParticleBlastr.SHAPE.CIRCLE,
+      // particleRadius:  5,
+      // particleSizeVariance: 10,
 
-      particleEndScale: 8,
+      particleShape: ParticleBlastr.SHAPE.IMAGE,
+      particleImg: document.getElementById('smokeParticle'),
+      particleWidth: 12,
+      particleHeight: 12,
+      particleSizeVariance: 50,
+
+      particleEndScale: 10,
 
       particleMaxDistance: 340,
       particleMinDistance: 40,
@@ -174,7 +183,7 @@
 
       blastLengthMs: blastLength,
       
-      gravity: -1600,
+      gravity: -2600,
       gravityVariance: 1200
     });
 
@@ -207,7 +216,7 @@
       particleMinDistance: 220,
       // allowNegY: true,
 
-      blastLengthMs: blastLength-1500,
+      blastLengthMs: blastLength,
       
       gravity: 0
     });
