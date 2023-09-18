@@ -320,6 +320,7 @@ class ParticleBlastr {
   gravityVariance = 0;
 
   compositeOperation = 'source-over'; // Default canvas composite operation.
+  backgroundImg = null;
 
   pFillColor = [255, 0, 255]; // Pink for debug.
   pFillColors = [];
@@ -373,6 +374,8 @@ class ParticleBlastr {
       this.ctx.fillText('Canvas context is functional.', 223, 214)
     }
     //
+
+    if (cfg.backgroundImg) this.backgroundImg = cfg.backgroundImg;
 
     if (cfg.particleCount) this.numPrts = cfg.particleCount;
     if (cfg.particleShape) this.pShape  = cfg.particleShape;
@@ -622,7 +625,12 @@ class ParticleBlastr {
     const lifetimeFactor = (timeSinceStart / this.blastLengthMs); // lifetimeFactor 0 Approaches 1
     const overtime = timeSinceStart >= this.blastLengthMs;
 
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (this.backgroundImg) {
+      this.ctx.globalCompositeOperation = 'source-over'; // Default
+      this.ctx.drawImage(this.backgroundImg, 0, 0);
+      this.ctx.globalCompositeOperation = this.compositeOperation;
+    }
 
     this.prts.forEach((p) => {
       p.animate(this.ctx, ParticleBlastr.util.clamp(lifetimeFactor, 0, 1));
@@ -642,6 +650,11 @@ class ParticleBlastr {
     this.#isLooping = false;
 
     this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+    if (this.backgroundImg) {
+      this.ctx.globalCompositeOperation = 'source-over'; // Default
+      this.ctx.drawImage(this.backgroundImg, 0, 0);
+      this.ctx.globalCompositeOperation = this.compositeOperation;
+    }
   }
 
   // UTIL

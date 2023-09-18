@@ -60,7 +60,8 @@
     }
 
     #starParticle,
-    #smokeParticle {
+    #smokeParticle,
+    #hasselhoffBg {
       display: none;
     }
   </style>
@@ -81,6 +82,7 @@
   </div>
   <img id="starParticle" src="img/starParticle_20x20.png" />
   <img id="smokeParticle" src="img/smokeParticle_100x100.png" />
+  <img id="hasselhoffBg" src="img/hasselhoff_bg.jpg" />
 
   <script type="text/javascript" src="src/particle-blastr.js"></script>
   <script type="text/javascript">
@@ -124,6 +126,9 @@
       canvas: document.getElementById('canvas2'),
       
       particleCount: 300,
+
+      // backgroundImg: document.getElementById('hasselhoffBg'),
+      // compositeOperation: 'soft-light',
 
       particleColors: [
         [  0, 120, 225],
@@ -234,7 +239,7 @@
     const pb5 = new ParticleBlastr({
       canvas: document.getElementById('canvas5'),
       
-      particleCount: 25,
+      particleCount: 15,
 
       particleColor: [255, 0, 0],
       particleStrokeColor: [205, 60, 60],
@@ -252,11 +257,13 @@
 
       particleMaxDistance: 260,
       particleMinDistance: 50,
+
       allowNegY: true,
 
-      blastLengthMs: blastLength,
+      blastLengthMs: blastLength - 750,
       
-      gravity: 600
+      gravity: -125
+      // gravity: 600
     });
 
 
@@ -272,7 +279,7 @@
         [255, 0, 255],
       ],
 
-      particleStrokeColor: [215, 215, 215],
+      particleStrokeColor: [255, 255, 255],
 
       particleShape: ParticleBlastr.SHAPE.RECT,
       particleWidth: 25,
@@ -299,7 +306,8 @@
     }
     function blastLoop2() {
       setTimeout(blastLoop2, blastLength);
-      pb2.startBlast(150, 200);
+      // pb2.startBlast(150, 125);
+      pb2.startBlast(150, 165);
     }
     function blastLoop3() {
       setTimeout(blastLoop3, blastLength);
@@ -312,7 +320,7 @@
     }
     function blastLoop5() {
       setTimeout(blastLoop5, blastLength);
-      pb5.startBlast(150, 150);
+      pb5.startBlast(150, 250);
     }
     function blastLoop6() {
       setTimeout(blastLoop6, blastLength);
