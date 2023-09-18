@@ -128,7 +128,7 @@
       canvas: document.getElementById('canvas2'),
       
       // quadrants: [true, false, true, false],
-      quadrants: [false, true, false, true],
+      quadrants: [true, true, false, true],
 
       particleCount: 300,
 
@@ -144,7 +144,7 @@
       ],
 
       particleShape: ParticleBlastr.SHAPE.SQUARE,
-      particleSize: 25,
+      particleSize: 35,
       particleSizeVariance: 12,
 
       // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
@@ -245,10 +245,9 @@
     const pb5 = new ParticleBlastr({
       canvas: document.getElementById('canvas5'),
       
-      // Quadrants clockwise from 12:00: NE, SE, SW, NW
       // quadrants: [true, false, true, false],
       // quadrants: [true, true, true, false],
-      quadrants: [false, true, true, true],
+      quadrants: [false, true, false, true],
       // quadrants: [true, false, true, false],
 
       particleCount: 65,
@@ -335,7 +334,7 @@
     }
     function blastLoop6() {
       setTimeout(blastLoop6, blastLength);
-      pb6.startBlast(150, -50);
+      pb6.startBlast(150, -150);
     }
 
 

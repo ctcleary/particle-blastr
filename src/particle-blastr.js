@@ -34,7 +34,7 @@ class Particle {
     this.quadrants = cfg.quadrants;
     this.dist = cfg.dist;
     this.resetDist();
-    
+
     this.upwardThrustFactor = this.determineUpwardThrustFactor();
 
     this.shape = cfg.shape;  // Required
@@ -344,6 +344,8 @@ class ParticleBlastr {
 
   compositeOperation = 'source-over'; // Default canvas composite operation.
   backgroundImg = null;
+
+  // Quadrants clockwise from 12:00: NE, SE, SW, NW // Default: Omnidirectional
   quadrants = [true, true, true, true];
 
   pFillColor = [255, 0, 255]; // Pink for debug.
