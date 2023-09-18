@@ -241,10 +241,10 @@ class ParticleBlastr {
     //
 
     if (cfg.particleCount) this.numPrts   = cfg.particleCount;
-    if (cfg.shape) this.pShape = cfg.shape;
+    if (cfg.particleShape) this.pShape = cfg.particleShape;
 
     if (!this.pShape) {
-        console.warn('Bad config for ParticleBlastr. {shape} required.');
+        console.warn('Bad config for ParticleBlastr. {particleShape} required.');
     }
 
     switch (this.pShape) {
