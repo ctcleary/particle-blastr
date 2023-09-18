@@ -134,15 +134,12 @@ class Particle {
 
     let distXY = this.clampToCircle(this.x, this.y, this.distX, this.distY);
 
-    let xPosYPos = false;
-    let xPosYNeg = false;
-    let xNegYNeg = false;
-    let xNegYPos = false;
-    if (this.quadrants[0]) xPosYPos = true;
-    if (this.quadrants[1]) xPosYNeg = true;
-    if (this.quadrants[2]) xNegYNeg = true;
-    if (this.quadrants[3]) xNegYPos = true;
+    const xPosYPos = this.quadrants[0] ? true : false;
+    const xPosYNeg = this.quadrants[1] ? true : false;
+    const xNegYNeg = this.quadrants[2] ? true : false;
+    const xNegYPos = this.quadrants[3] ? true : false;
 
+    // Randomize until we find an active Quad, then move forward.
     let xIsPos;
     let yIsPos;    
     let inActiveQuad = false;
