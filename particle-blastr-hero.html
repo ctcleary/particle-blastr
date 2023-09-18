@@ -100,10 +100,7 @@
 
       // shape: ParticleBlastr.SHAPE.CIRCLE,
       // particleRadius:  8,
-      // particleWidth:  8,
-      // particleHeight: 8,
-      // // particleBorderRadius: 50,
-      // sizeVariance: 8,
+      // particleSizeVariance: 8,
 
       // particleEndOpacity: 1,
 
@@ -118,8 +115,6 @@
       setTimeout(blastLoop1, blastLength);
       pb1.startBlast(150, 150);
     }
-    blastLoop1();
-
 
 
     const pb2 = new ParticleBlastr({
@@ -138,6 +133,11 @@
       particleSize: 16,
       particleSizeVariance: 3,
 
+      // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
+      // particleWidth: 30,
+      // particleHeight: 20,
+      // particleBorderRadius: 30,
+
       particleMaxDistance: 160,
       particleMinDistance: 80,
       allowNegY: true,
@@ -151,7 +151,6 @@
       setTimeout(blastLoop2, blastLength);
       pb2.startBlast(150, 200);
     }
-    blastLoop2();
 
 
     const pb3 = new ParticleBlastr({
@@ -164,7 +163,6 @@
       particleEndOpactiy: 0,
 
       particleShape: ParticleBlastr.SHAPE.CIRCLE,
-      // particleRadius:  22,
       particleRadius:  28,
       particleSizeVariance: 12,
 
@@ -182,6 +180,10 @@
       setTimeout(blastLoop3, blastLength);
       pb3.startBlast(150, 310);
     }
+
+
+    blastLoop1();
+    blastLoop2();
     blastLoop3();
   </script>
 </body>
