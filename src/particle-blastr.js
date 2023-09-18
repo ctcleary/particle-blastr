@@ -7,13 +7,10 @@ class Particle {
   endX = 100;
   endY = 100;
 
-  width;
-  height;
-  borderRadius = 50;
-
-  fillColor = [255,  0, 255]; // Pink for debug
-  img = null;
   opacity = 1;
+  endOpacity = 0;
+
+  endScale = 0;
 
   shape = ParticleBlastr.SHAPE.CIRCLE;
 
@@ -30,6 +27,7 @@ class Particle {
     this.opacity    = cfg.opacity || 1;
     this.endOpacity = cfg.endOpacity || 0;
 
+    this.endScale = cfg.endScale || 0;
 
     this.dist = cfg.dist;
     this.resetDist();
@@ -104,6 +102,22 @@ class Particle {
     return this.opacity - ((this.opacity - this.endOpacity) * lifetimeFactor);
   }
 
+  getCurrScale(lifetimeFactor) {
+    const lifetimeFactorInverse = 1 - lifetimeFactor;
+
+    if (this.endScale < 1) {
+      return 1 - ((1 - this.endScale) * lifetimeFactor);
+    } else {
+      let startScale = 1; // 1.0
+      let endScale = this.endScale; // 3
+
+      // 0% - scale should = 1.0
+      //50% - scale should = 2.0
+      //100%- scale should = 3.0
+      return this.endScale - ((this.endScale - 1) * lifetimeFactorInverse);
+    }
+  }
+
   getCurrGravityEffect(lifetimeFactor) {
     // I'm not entirely sure why this math works, but it does work the way I want it to in execution.
     // But that means I'm not sure why my gravity numbers need to be so high.
@@ -154,8 +168,11 @@ class ParticleImage extends Particle {
     const currOpacity = super.getCurrOpacity(lifetimeFactor);
     ctx.globalAlpha = currOpacity;
     if (this.width && this.height) {
+
+      let currScale = this.getCurrScale(lifetimeFactor);
+      
       // console.log("this.width, this.height ::", this.width, this.height);
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      ctx.drawImage(this.img, this.x, this.y, this.width * currScale, this.height * currScale);
       // ctx.drawImage(this.img, this.x, this.y, 10, 10);
     } else {
       ctx.drawImage(this.img, this.x, this.y);
@@ -167,7 +184,7 @@ class ParticleImage extends Particle {
 
 // --- Drawn particle classes:
 class ParticleDrawn extends Particle {
-  fillColor;
+  fillColor = [255,  0, 255]; // Pink for debug
 
   constructor(cfg) {
     super(cfg);
@@ -183,6 +200,10 @@ class ParticleDrawn extends Particle {
     ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${currOpacity})`;
 
     // Draw operation performed by child class.
+  }
+
+  getCurrScale(lifetimeFactor) {
+    return super.getCurrScale(lifetimeFactor);
   }
 
   prepForAnimate(x, y) {
@@ -203,8 +224,10 @@ class ParticleCircle extends ParticleDrawn {
   animate(ctx, lifetimeFactor) {
     super.animate(ctx, lifetimeFactor);
 
+    let currScale = this.getCurrScale(lifetimeFactor);
+
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.arc(this.x, this.y, this.radius * currScale, 0, 2 * Math.PI);
     ctx.fill();
   }
 }
@@ -223,7 +246,9 @@ class ParticleRect extends ParticleDrawn {
   animate(ctx, lifetimeFactor) {
     super.animate(ctx, lifetimeFactor);
 
-    ctx.fillRect(this.x, this.y, this.width, this.height);  
+    let currScale = this.getCurrScale(lifetimeFactor);
+
+    ctx.fillRect(this.x, this.y, this.width * currScale, this.height * currScale);  
   }
 }
 
@@ -243,8 +268,10 @@ class ParticleRoundRect extends ParticleDrawn {
   animate(ctx, lifetimeFactor) {
     super.animate(ctx, lifetimeFactor);
 
+    let currScale = this.getCurrScale(lifetimeFactor);
+
     ctx.beginPath();
-    ctx.roundRect(this.x, this.y, this.width, this.height, this.borderRadius);
+    ctx.roundRect(this.x, this.y, this.width * currScale, this.height * currScale, this.borderRadius);
     ctx.fill();
   }
 }
@@ -270,25 +297,28 @@ class ParticleBlastr {
 
   blastLengthMs = 1500;
   gravity = 0;
+  gravityVariance = 0;
 
+  compositeOperation = 'source-over'; // Default canvas composite operation.
 
   fillColor = [255, 0, 255]; // Pink for debug.
   fillColors = [];
-  pImg;
 
-  pWidth = 20;
-  pHeight = 20;
-  pSize = 20;
-  pBorderRadius = 50;
+  pImg;
 
   pShape = ParticleBlastr.SHAPE.CIRCLE;
   pDimensions = {
     width: 10,
     height: 10,
+
     borderRadius: 25,
+
     radius: 5,
+
     sizeVariance: 0,
-    proportionalSizeVariance: true
+    proportionalSizeVariance: true,
+
+    particleEndScale: 0
   }
 
   pRadius = 5
@@ -324,42 +354,40 @@ class ParticleBlastr {
     }
     //
 
-    if (cfg.particleCount) this.numPrts   = cfg.particleCount;
-    if (cfg.particleShape) this.pShape = cfg.particleShape;
+    if (cfg.particleCount) this.numPrts = cfg.particleCount;
+    if (cfg.particleShape) this.pShape  = cfg.particleShape;
 
     if (!this.pShape) {
         console.warn('Bad config for ParticleBlastr. {particleShape} required.');
     }
 
+    // Properties unique to shape type
     switch (this.pShape) {
-      case ParticleBlastr.SHAPE.RECT:
-        this.pDimensions.width  = cfg.particleWidth;
-        this.pDimensions.height = cfg.particleHeight;
-        break;
       case ParticleBlastr.SHAPE.ROUND_RECT:
-        this.pDimensions.width  = cfg.particleWidth;
-        this.pDimensions.height = cfg.particleHeight;
         this.pDimensions.borderRadius = cfg.particleBorderRadius;
-        break;
-      case ParticleBlastr.SHAPE.SQUARE:
-        this.pDimensions.width  = cfg.particleSize;
-        this.pDimensions.height = cfg.particleSize;
         break;
       case ParticleBlastr.SHAPE.CIRCLE:
         this.pDimensions.radius = cfg.particleRadius;
         break;
       case ParticleBlastr.SHAPE.IMAGE:
         this.pImg = cfg.particleImg;
-        this.pDimensions.width  = cfg.particleWidth;
-        this.pDimensions.height = cfg.particleHeight;
         break;
       default:
-        console.warn('Bad config for ParticleBlastr. {shape} required.');
         break;
+    }
+
+    if (this.pShape == ParticleBlastr.SHAPE.SQUARE) {
+      this.pDimensions.width  = cfg.particleSize;
+      this.pDimensions.height = cfg.particleSize;
+    } else if (this.pShape != ParticleBlastr.SHAPE.CIRCLE) {
+      this.pDimensions.width  = cfg.particleWidth;
+      this.pDimensions.height = cfg.particleHeight;
     }
 
     if (cfg.particleSizeVariance) this.pDimensions.sizeVariance = cfg.particleSizeVariance;
     if (cfg.particleProportionalSizeVariance) this.pDimensions.proportionalSizeVariance = cfg.particleProportionalSizeVariance
+
+    if (ParticleBlastr.util.isDef(cfg.particleEndScale)) this.pDimensions.particleEndScale = cfg.particleEndScale;
 
     if (this.pShape != ParticleBlastr.SHAPE.IMAGE) {
       if (cfg.particleColor) {
@@ -378,9 +406,11 @@ class ParticleBlastr {
     if (cfg.particleMinDistance) this.pMinDist = cfg.particleMinDistance;
 
     if (ParticleBlastr.util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
-    if (cfg.gravityVariance) this.pGravityVariance = cfg.gravityVariance;
+    if (cfg.gravityVariance) this.gravityVariance = cfg.gravityVariance;
 
     if (ParticleBlastr.util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
+
+    if (cfg.compositeOperation) this.compositeOperation = cfg.compositeOperation;
 
     if (cfg.blastLengthMs) this.blastLengthMs = cfg.blastLengthMs;
 
@@ -425,8 +455,10 @@ class ParticleBlastr {
 
 
       // Handle sizeVariance randomization
+      // if (this.pDimensions.sizeVariance) {
       if (this.sizeVariance) {
         const changeBy = Math.random() * this.sizeVariance;
+
         if (this.pShape == ParticleBlastr.SHAPE.CIRCLE) {
           let newRadius = pCfg.radius;
 
@@ -443,7 +475,7 @@ class ParticleBlastr {
 
           if (this.pDimensions.proportionalSizeVariance) { // width and height change by the same amount
             let add = Math.random() > 0.5;
-            newWidth  = add ? newWidth + changeBy  : newWidth - changeBy;
+            newWidth  = add ? newWidth  + changeBy : newWidth  - changeBy;
             newHeight = add ? newHeight + changeBy : newHeight - changeBy;
           } else { // randomize width and height independently
             newWidth  = this.addOrSubtract(newWidth, changeBy);
@@ -485,13 +517,13 @@ class ParticleBlastr {
 
       // Handle gravity randomization.
       pCfg.gravity   = this.pGravity;
-      if (this.pGravityVariance) {
+      if (this.gravityVariance) {
         let newGravity = pCfg.gravity;
-        let gravChangeBy = Math.random() * this.pGravityVariance;
+        let gravChangeBy = Math.random() * this.gravityVariance;
 
         newGravity = this.addOrSubtract(newGravity, gravChangeBy);
 
-        pCfg.gravity = ParticleBlastr.util.clamp(newGravity, 0, pCfg.gravity + this.pGravityVariance);
+        pCfg.gravity = ParticleBlastr.util.clamp(newGravity, 0, pCfg.gravity + this.gravityVariance);
       }
 
 
@@ -505,6 +537,7 @@ class ParticleBlastr {
         }
       }
 
+      pCfg.endScale = this.pDimensions.particleEndScale;
 
       let p;
       switch (this.pShape) {
@@ -519,6 +552,7 @@ class ParticleBlastr {
           break;
         case ParticleBlastr.SHAPE.RECT:
         case ParticleBlastr.SHAPE.SQUARE:
+          console.log("pCfg.width, pCfg.height ::", pCfg.width, pCfg.height);
           p = new ParticleRect(pCfg)
           break;
         default:
@@ -552,6 +586,7 @@ class ParticleBlastr {
 
   prepForLoop() {
     this.ctx.globalAlpha = 1;
+    this.ctx.globalCompositeOperation = this.compositeOperation;
 
     this.prts.forEach((p) => {
       p.prepForAnimate(this.originX, this.originY)

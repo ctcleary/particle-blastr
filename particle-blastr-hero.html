@@ -69,6 +69,12 @@
     <canvas id="canvas1" width="320" height="398"></canvas>
     <canvas id="canvas2" width="320" height="398"></canvas>
     <canvas id="canvas3" width="320" height="398"></canvas>
+    
+    <br/>
+
+    <canvas id="canvas4" width="320" height="398"></canvas>
+    <canvas id="canvas5" width="320" height="398"></canvas>
+    <canvas id="canvas6" width="320" height="398"></canvas>
 
     <!-- <h1>  Examples of Particle-Blastr in action! </h1> -->
   </div>
@@ -93,8 +99,8 @@
 
       particleShape: ParticleBlastr.SHAPE.IMAGE,
       particleImg: document.getElementById('starParticle'),
-      particleWidth:  30,
-      particleHeight: 30,
+      particleWidth:  40,
+      particleHeight: 40,
       particleSizeVariance: 25,
       particleProportionalSizeVariance: true,
 
@@ -108,13 +114,8 @@
       particleMinDistance: 40,
       gravity: 1500,
 
-      blastLengthMs: 1250
+      blastLengthMs: blastLength
     });
-
-    function blastLoop1() {
-      setTimeout(blastLoop1, blastLength);
-      pb1.startBlast(150, 150);
-    }
 
 
     const pb2 = new ParticleBlastr({
@@ -130,8 +131,10 @@
       ],
 
       particleShape: ParticleBlastr.SHAPE.SQUARE,
-      particleSize: 16,
-      particleSizeVariance: 3,
+      particleSize: 36,
+      particleSizeVariance: 12,
+
+      particleEndScale: 0.25,
 
       // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
       // particleWidth: 30,
@@ -143,14 +146,11 @@
       allowNegY: true,
 
       blastLengthMs: blastLength-1250,
+      // blastLengthMs: blastLength,
       
       gravity: 0
     });
 
-    function blastLoop2() {
-      setTimeout(blastLoop2, blastLength);
-      pb2.startBlast(150, 200);
-    }
 
 
     const pb3 = new ParticleBlastr({
@@ -163,8 +163,10 @@
       particleEndOpactiy: 0,
 
       particleShape: ParticleBlastr.SHAPE.CIRCLE,
-      particleRadius:  28,
-      particleSizeVariance: 12,
+      particleRadius:  5,
+      particleSizeVariance: 10,
+
+      particleEndScale: 8,
 
       particleMaxDistance: 340,
       particleMinDistance: 40,
@@ -172,19 +174,135 @@
 
       blastLengthMs: blastLength,
       
-      gravity: -1200,
-      gravityVariance: 800
+      gravity: -1600,
+      gravityVariance: 1200
     });
 
+    const pb4 = new ParticleBlastr({
+      canvas: document.getElementById('canvas4'),
+      
+      particleCount: 300,
+
+      particleColors: [
+        [255, 120, 225],
+        [255, 180, 225],
+        [255, 100, 240],
+        [255, 235, 255],
+      ],
+
+      particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
+      particleWidth: 32,
+      particleHeight: 16,
+      particleBorderRadius: 25,
+      particleSizeVariance: 3,
+
+      particleEndScale: 0.5,
+
+      // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
+      // particleWidth: 30,
+      // particleHeight: 20,
+      // particleBorderRadius: 30,
+
+      particleMaxDistance: 260,
+      particleMinDistance: 220,
+      // allowNegY: true,
+
+      blastLengthMs: blastLength-1500,
+      
+      gravity: 0
+    });
+
+
+    const pb5 = new ParticleBlastr({
+      canvas: document.getElementById('canvas5'),
+      
+      particleCount: 25,
+
+      particleColor: [255, 0, 0],
+
+      particleShape: ParticleBlastr.SHAPE.RECT,
+      particleWidth: 12,
+      particleHeight: 6,
+
+      particleSizeVariance: 3,
+
+      particleEndScale: 0,
+
+      particleMaxDistance: 260,
+      particleMinDistance: 150,
+      allowNegY: true,
+
+      blastLengthMs: blastLength,
+      
+      gravity: 600
+    });
+
+
+
+    const pb6 = new ParticleBlastr({
+      canvas: document.getElementById('canvas6'),
+      
+      particleCount: 425,
+
+      particleColors: [
+        [255, 255, 0],
+        [0, 255, 255],
+        [255, 0, 255],
+      ],
+
+      particleShape: ParticleBlastr.SHAPE.RECT,
+      particleWidth: 25,
+      particleHeight: 12,
+
+      particleSizeVariance: 30,
+
+      particleEndScale: 15,
+      particleEndOpacity: 1,
+
+      particleMaxDistance: 1600,
+      allowNegY: true,
+
+      blastLengthMs: blastLength,
+      
+      gravity: 8000
+    });
+
+
+
+    function blastLoop1() {
+      setTimeout(blastLoop1, blastLength);
+      pb1.startBlast(150, 150);
+    }
+    function blastLoop2() {
+      setTimeout(blastLoop2, blastLength);
+      pb2.startBlast(150, 200);
+    }
     function blastLoop3() {
       setTimeout(blastLoop3, blastLength);
       pb3.startBlast(150, 310);
+    }
+
+    function blastLoop4() {
+      setTimeout(blastLoop4, blastLength);
+      pb4.startBlast(150, 390);
+    }
+    function blastLoop5() {
+      setTimeout(blastLoop5, blastLength);
+      pb5.startBlast(150, 150);
+    }
+    function blastLoop6() {
+      setTimeout(blastLoop6, blastLength);
+      pb6.startBlast(150, 0);
     }
 
 
     blastLoop1();
     blastLoop2();
     blastLoop3();
+
+    blastLoop4();
+    blastLoop5();
+    blastLoop6();
   </script>
 </body>
 </html>
