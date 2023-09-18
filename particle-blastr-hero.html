@@ -89,7 +89,7 @@
     const pb1 = new ParticleBlastr({
       canvas: document.getElementById('canvas1'),
       
-      particleCount: 355,
+      particleCount: 75,
       particleColors: [
         [ 30, 155,  10], //pine green
         // [ 65, 150,  15], //pine green
@@ -110,7 +110,7 @@
       // particleRadius:  8,
       // particleSizeVariance: 8,
 
-      // particleEndOpacity: 1,
+      particleEndOpacity: 1,
 
       particleMaxDistance: 580,
       particleMinDistance: 40,
@@ -130,13 +130,22 @@
         [  0, 180, 225],
         [  5, 100, 240],
         [160, 235, 255],
+        [200, 235, 255],
       ],
 
       particleShape: ParticleBlastr.SHAPE.SQUARE,
-      particleSize: 36,
+      particleSize: 25,
       particleSizeVariance: 12,
 
-      particleEndScale: 0.25,
+      // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
+      // particleWidth: 25,
+      // particleHeight: 25,
+      // particleBorderRadius: 0,
+      // particleSizeVariance: 12,
+
+      particleEndScale: 0.15,
+
+      particleStrokeColor: [235, 235, 255],
 
       // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
       // particleWidth: 30,
@@ -228,17 +237,21 @@
       particleCount: 25,
 
       particleColor: [255, 0, 0],
+      particleStrokeColor: [205, 60, 60],
+      // particleStrokeColor: [0, 0, 0],
 
-      particleShape: ParticleBlastr.SHAPE.RECT,
-      particleWidth: 12,
-      particleHeight: 6,
+      // particleShape: ParticleBlastr.SHAPE.RECT,
+      // particleWidth: 4,
+      // particleHeight: 2,
 
-      particleSizeVariance: 3,
+      particleShape: ParticleBlastr.SHAPE.CIRCLE,
+      particleRadius: 2,
+      particleSizeVariance: 4,
 
-      particleEndScale: 0,
+      particleEndScale: 20,
 
       particleMaxDistance: 260,
-      particleMinDistance: 150,
+      particleMinDistance: 50,
       allowNegY: true,
 
       blastLengthMs: blastLength,
@@ -258,6 +271,8 @@
         [0, 255, 255],
         [255, 0, 255],
       ],
+
+      particleStrokeColor: [215, 215, 215],
 
       particleShape: ParticleBlastr.SHAPE.RECT,
       particleWidth: 25,

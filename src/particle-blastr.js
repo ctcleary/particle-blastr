@@ -171,9 +171,7 @@ class ParticleImage extends Particle {
 
       let currScale = this.getCurrScale(lifetimeFactor);
       
-      // console.log("this.width, this.height ::", this.width, this.height);
       ctx.drawImage(this.img, this.x, this.y, this.width * currScale, this.height * currScale);
-      // ctx.drawImage(this.img, this.x, this.y, 10, 10);
     } else {
       ctx.drawImage(this.img, this.x, this.y);
     }
@@ -185,11 +183,14 @@ class ParticleImage extends Particle {
 // --- Drawn particle classes:
 class ParticleDrawn extends Particle {
   fillColor = [255,  0, 255]; // Pink for debug
+  strokeColor = null; // Default: no stroke
 
   constructor(cfg) {
     super(cfg);
 
     this.fillColor = cfg.fillColor;
+
+    if (cfg.strokeColor) this.strokeColor = cfg.strokeColor;
   }
 
   animate(ctx, lifetimeFactor) {
@@ -198,6 +199,11 @@ class ParticleDrawn extends Particle {
     const currOpacity = super.getCurrOpacity(lifetimeFactor);
     const rgb = this.fillColor;
     ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${currOpacity})`;
+
+    if (this.strokeColor) {
+      const strokeRgb = this.strokeColor;
+      ctx.strokeStyle = `rgba(${strokeRgb[0]}, ${strokeRgb[1]}, ${strokeRgb[2]}, ${currOpacity})`;
+    }
 
     // Draw operation performed by child class.
   }
@@ -224,11 +230,15 @@ class ParticleCircle extends ParticleDrawn {
   animate(ctx, lifetimeFactor) {
     super.animate(ctx, lifetimeFactor);
 
-    let currScale = this.getCurrScale(lifetimeFactor);
+    const currScale = this.getCurrScale(lifetimeFactor);
 
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius * currScale, 0, 2 * Math.PI);
     ctx.fill();
+    
+    if (this.strokeColor) {
+      ctx.stroke();
+    }
   }
 }
 
@@ -246,9 +256,15 @@ class ParticleRect extends ParticleDrawn {
   animate(ctx, lifetimeFactor) {
     super.animate(ctx, lifetimeFactor);
 
-    let currScale = this.getCurrScale(lifetimeFactor);
+    const currScale = this.getCurrScale(lifetimeFactor);
+    const w = this.width * currScale;
+    const h = this.height * currScale;
 
-    ctx.fillRect(this.x, this.y, this.width * currScale, this.height * currScale);  
+    ctx.fillRect(this.x, this.y, w, h);  
+
+    if (this.strokeColor) {
+      ctx.strokeRect(this.x, this.y, w, h);
+    }
   }
 }
 
@@ -268,11 +284,15 @@ class ParticleRoundRect extends ParticleDrawn {
   animate(ctx, lifetimeFactor) {
     super.animate(ctx, lifetimeFactor);
 
-    let currScale = this.getCurrScale(lifetimeFactor);
+    const currScale = this.getCurrScale(lifetimeFactor);
 
     ctx.beginPath();
     ctx.roundRect(this.x, this.y, this.width * currScale, this.height * currScale, this.borderRadius);
     ctx.fill();
+
+    if (this.strokeColor) {
+      ctx.stroke();
+    }
   }
 }
 
@@ -301,8 +321,8 @@ class ParticleBlastr {
 
   compositeOperation = 'source-over'; // Default canvas composite operation.
 
-  fillColor = [255, 0, 255]; // Pink for debug.
-  fillColors = [];
+  pFillColor = [255, 0, 255]; // Pink for debug.
+  pFillColors = [];
 
   pImg;
 
@@ -391,12 +411,14 @@ class ParticleBlastr {
 
     if (this.pShape != ParticleBlastr.SHAPE.IMAGE) {
       if (cfg.particleColor) {
-        this.fillColor = cfg.particleColor;
-        this.fillColors = null;
+        this.pFillColor = cfg.particleColor;
+        this.pFillColors = null;
       } else if (cfg.particleColors) {
-        this.fillColors = cfg.particleColors;
-        this.fillColor = null;
+        this.pFillColors = cfg.particleColors;
+        this.pFillColor = null;
       }
+
+      if (cfg.particleStrokeColor) this.pStrokeColor = cfg.particleStrokeColor;
     }
 
     this.pOpacity    = cfg.particleOpacity || 1;
@@ -528,13 +550,15 @@ class ParticleBlastr {
 
 
       if (this.pShape != ParticleBlastr.SHAPE.IMAGE) {
-        if (this.fillColors && this.fillColors.length > 0) {
-          pCfg.fillColor = ParticleBlastr.util.randomItem(this.fillColors);
-        } else if (this.fillColor) {
-          pCfg.fillColor = this.fillColor;
+        if (this.pFillColors && this.pFillColors.length > 0) {
+          pCfg.fillColor = ParticleBlastr.util.randomItem(this.pFillColors);
+        } else if (this.pFillColor) {
+          pCfg.fillColor = this.pFillColor;
         } else {
           console.warn('Bad config. ParticleBlastr needs either a particleColor array or particleColors array.')
         }
+
+        if (this.pStrokeColor) pCfg.strokeColor = this.pStrokeColor;
       }
 
       pCfg.endScale = this.pDimensions.particleEndScale;
