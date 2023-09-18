@@ -7,6 +7,8 @@ class Particle {
   endX = 100;
   endY = 100;
 
+  quadrants;
+
   opacity = 1;
   endOpacity = 0;
 
@@ -29,13 +31,13 @@ class Particle {
 
     this.endScale = cfg.endScale || 0;
 
+    this.quadrants = cfg.quadrants;
     this.dist = cfg.dist;
     this.resetDist();
+    
     this.upwardThrustFactor = this.determineUpwardThrustFactor();
 
     this.shape = cfg.shape;  // Required
-
-    this.allowNegY = cfg.allowNegY;
 
     this.liveTime = cfg.blastLengthMs;
   }
@@ -130,16 +132,37 @@ class Particle {
     this.distX = ParticleBlastr.util.roundRand(this.dist);
     this.distY = ParticleBlastr.util.roundRand(this.dist);
 
-    const distXY = this.clampToCircle(this.x, this.y, this.distX, this.distY);
+    let distXY = this.clampToCircle(this.x, this.y, this.distX, this.distY);
 
-    const isNeg = Math.random() > 0.5;
-    if (isNeg) distXY.x = distXY.x * -1;
+    let xPosYPos = false;
+    let xPosYNeg = false;
+    let xNegYNeg = false;
+    let xNegYPos = false;
+    if (this.quadrants[0]) xPosYPos = true;
+    if (this.quadrants[1]) xPosYNeg = true;
+    if (this.quadrants[2]) xNegYNeg = true;
+    if (this.quadrants[3]) xNegYPos = true;
 
-    if (ParticleBlastr.util.isDef(this.allowNegY) && this.allowNegY) {
-      const isYNeg = Math.random() > 0.5;
+    let xIsPos;
+    let yIsPos;    
+    let inActiveQuad = false;
+    while (!inActiveQuad) {
+      xIsPos = Math.random() > 0.5;
+      yIsPos = Math.random() > 0.5;
 
-      if (isYNeg) distXY.y = distXY.y * -1;
+      if (xIsPos && yIsPos) {
+        inActiveQuad = xPosYPos;
+      } else if (!xIsPos && yIsPos) {
+        inActiveQuad = xNegYPos;
+      } else if (xIsPos && !yIsPos) {
+        inActiveQuad = xPosYNeg;
+      } else if (!xIsPos && !yIsPos) {
+        inActiveQuad = xNegYNeg;
+      }
     }
+
+    if (!xIsPos) distXY.x = distXY.x * -1;
+    if (!yIsPos) distXY.y = distXY.y * -1;
 
     this.distX = distXY.x;
     this.distY = distXY.y;
@@ -321,6 +344,7 @@ class ParticleBlastr {
 
   compositeOperation = 'source-over'; // Default canvas composite operation.
   backgroundImg = null;
+  quadrants = [true, true, true, true];
 
   pFillColor = [255, 0, 255]; // Pink for debug.
   pFillColors = [];
@@ -433,7 +457,7 @@ class ParticleBlastr {
     if (ParticleBlastr.util.isDef(cfg.gravity))   this.pGravity   = cfg.gravity;
     if (cfg.gravityVariance) this.gravityVariance = cfg.gravityVariance;
 
-    if (ParticleBlastr.util.isDef(cfg.allowNegY)) this.allowNegY = cfg.allowNegY;
+    if (cfg.quadrants) this.quadrants = cfg.quadrants;
 
     if (cfg.compositeOperation) this.compositeOperation = cfg.compositeOperation;
 
@@ -452,7 +476,7 @@ class ParticleBlastr {
 
         blastLengthMs: this.blastLengthMs,
 
-        allowNegY: this.allowNegY, 
+        quadrants: this.quadrants,
     };
 
 

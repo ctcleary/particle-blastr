@@ -90,6 +90,8 @@
 
     const pb1 = new ParticleBlastr({
       canvas: document.getElementById('canvas1'),
+
+      quadrants: [true, false, false, true],
       
       particleCount: 75,
       particleColors: [
@@ -125,6 +127,9 @@
     const pb2 = new ParticleBlastr({
       canvas: document.getElementById('canvas2'),
       
+      // quadrants: [true, false, true, false],
+      quadrants: [false, true, false, true],
+
       particleCount: 300,
 
       // backgroundImg: document.getElementById('hasselhoffBg'),
@@ -159,7 +164,6 @@
 
       particleMaxDistance: 160,
       particleMinDistance: 80,
-      allowNegY: true,
 
       blastLengthMs: blastLength-1250,
       // blastLengthMs: blastLength,
@@ -193,7 +197,6 @@
 
       particleMaxDistance: 340,
       particleMinDistance: 40,
-      allowNegY: true,
 
       blastLengthMs: blastLength,
       
@@ -204,6 +207,8 @@
     const pb4 = new ParticleBlastr({
       canvas: document.getElementById('canvas4'),
       
+      quadrants: [true, true, false, false],
+
       particleCount: 300,
 
       particleColors: [
@@ -212,6 +217,7 @@
         [255, 100, 240],
         [255, 235, 255],
       ],
+      particleStrokeColor: [100, 100, 100],
 
       particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
       particleWidth: 32,
@@ -220,15 +226,15 @@
       particleSizeVariance: 3,
 
       particleEndScale: 0.5,
+      particleEndOpacity: 1,
 
       // particleShape: ParticleBlastr.SHAPE.ROUND_RECT,
       // particleWidth: 30,
       // particleHeight: 20,
       // particleBorderRadius: 30,
 
-      particleMaxDistance: 260,
-      particleMinDistance: 220,
-      // allowNegY: true,
+      particleMaxDistance: 660,
+      particleMinDistance: 620,
 
       blastLengthMs: blastLength,
       
@@ -239,7 +245,13 @@
     const pb5 = new ParticleBlastr({
       canvas: document.getElementById('canvas5'),
       
-      particleCount: 15,
+      // Quadrants clockwise from 12:00: NE, SE, SW, NW
+      // quadrants: [true, false, true, false],
+      // quadrants: [true, true, true, false],
+      quadrants: [false, true, true, true],
+      // quadrants: [true, false, true, false],
+
+      particleCount: 65,
 
       particleColor: [255, 0, 0],
       particleStrokeColor: [205, 60, 60],
@@ -253,12 +265,10 @@
       particleRadius: 2,
       particleSizeVariance: 4,
 
-      particleEndScale: 20,
+      particleEndScale: 10,
 
       particleMaxDistance: 260,
       particleMinDistance: 50,
-
-      allowNegY: true,
 
       blastLengthMs: blastLength - 750,
       
@@ -271,6 +281,8 @@
     const pb6 = new ParticleBlastr({
       canvas: document.getElementById('canvas6'),
       
+      quadrants: [false, true, true, false],
+
       particleCount: 425,
 
       particleColors: [
@@ -291,7 +303,6 @@
       particleEndOpacity: 1,
 
       particleMaxDistance: 1600,
-      allowNegY: true,
 
       blastLengthMs: blastLength,
       
@@ -316,7 +327,7 @@
 
     function blastLoop4() {
       setTimeout(blastLoop4, blastLength);
-      pb4.startBlast(150, 390);
+      pb4.startBlast(50, 200);
     }
     function blastLoop5() {
       setTimeout(blastLoop5, blastLength);
@@ -324,7 +335,7 @@
     }
     function blastLoop6() {
       setTimeout(blastLoop6, blastLength);
-      pb6.startBlast(150, 0);
+      pb6.startBlast(150, -50);
     }
 
 
